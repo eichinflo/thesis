@@ -10,9 +10,9 @@ using Base.Iterators: partition
 using Juno: @progress
 using Images
 
-images = MNIST.images()[1:1200]
+images = MNIST.images()[1:1000]
 # split data into batches
-data = [float(hcat(vec.(d)...)) for d in partition(images, 200)]
+data = [float(hcat(vec.(d)...)) for d in partition(images, 50)]
 
 latent_dimension = 10
 
@@ -40,7 +40,7 @@ autoencoder(x) = decoder(z(encoder(x)))
 loss(data) = mse(autoencoder(data), data)
 optimizer = ADAM()
 
-@epochs 10 Flux.train!(loss, params(autoencoder), zip(data), optimizer)
+@epochs 1000 Flux.train!(loss, params(autoencoder), zip(data), optimizer)
 
 img(x::Vector) = Gray.(reshape(clamp.(x, 0, 1), 28, 28))
 
