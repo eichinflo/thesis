@@ -22,11 +22,11 @@ using BSON: @save, @load
 
 # hyperparameters TODO: all params over here
 changed = true; # set to true, if model parameters were changed 
-latent_dimension = 15;
-epochs = 3;
-out_ch1 = 8;
+latent_dimension = 32;
+epochs = 5000;
+out_ch1 = 32;
 learning_rate = 0.001;
-batch_size = 20;
+batch_size = 10;
 
 layer1 = Conv((3, 3), 1=>out_ch1, relu, pad=1);
 sample1 = layer1(data[:, :, :, 1:10])
@@ -94,11 +94,3 @@ print("\nTraining...\n")
 @save "cvae_model.bson" cvae
 
 print("done.\n\n")
-
-sequence = [reshape(data[:, :, :, i], (60, 60, 1, 1)) for i in 1:size(data, 4)];
-anim1 = @animate for i=1:2000
-    output = cvae(sequence[i]) 
-    output = reshape(Flux.Tracker.data(output), 60, 60) 
-    Plots.heatmap(output, seriescolor=cgrad(ColorSchemes.gray.colors))
-end;
-gif(anim1, "out.gif", fps=15)
