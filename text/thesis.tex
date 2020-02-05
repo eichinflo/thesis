@@ -1,0 +1,157 @@
+% structure as seen in https://www.overleaf.com/learn/latex/How_to_Write_a_Thesis_in_LaTeX_(Part_1):_Basic_Structure
+
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\graphicspath{ {images/} }
+
+\title{
+{Separation of Foreground and Background Signal in Variational Autoencoders}\\
+{\large Albert-Ludwigs-Universität Freiburg}\\[\baselineskip]
+{\includegraphics[width=7cm]{logo.png}}
+}
+\author{Florian Eichin}
+\date{02.12.1995}
+
+\begin{document}
+
+\maketitle
+
+\chapter*{Abstract}
+Abstract goes here
+ 
+\chapter*{Dedication}
+To mum and dad
+ 
+\chapter*{Declaration}
+I declare that..
+ 
+\chapter*{Acknowledgements}
+I want to thank...
+ 
+\tableofcontents
+
+\chapter{Introduction}
+
+\chapter{}
+%TODO Zusammenfassung
+
+For this purpose, many ideas of the following chapter are taken from (XX) and the notation mainly follows the same logic. %TODO explain notation + continuous/discrete
+
+\section{Inference Problem Setup}
+%TODO : Rewrite intro, generative model
+Before we dive into the technical questions of this thesis, we want to begin with a discussion of the problem we attempt to solve formally. Let $\mathbf{x}, \mathbf{z}$ be random variables with $\mathbf{x}$ observable and $\mathbf{z} \in \mathbb{R}^k$ hidden. Then we are interested in the \textit{latent variable model} with model parameters $\theta^*$
+\begin{equation}
+	p_{\mathbf{\theta^*}}(\mathbf{x}, \mathbf{z}) = p_{\mathbf{\theta^*}}(\mathbf{x}| \mathbf{z})p_{\mathbf{\theta^*}}(\mathbf{z})
+\end{equation}
+We further assume that prior $p_{\mathbf{\theta^*}}(\mathbf{z})$ and $p_{\mathbf{\theta^*}}(\mathbf{x}|\mathbf{z})$ are from parametric families of distributions $p_{\mathbf{\theta}}(\mathbf{z})$ and $p_{\mathbf{\theta}}(\mathbf{x}|\mathbf{z})$ and that they have probability density functions that are differantiable with respect to $\mathbf{\theta}$ and $\mathbf{z}$ almost everywhere.
+
+To make things clearer, we can  look at it in a more practical way: Let $\mathbf{X} = \{ \mathbf{x}^{(i)}\}_{i=1}^N$ be a dataset with $N$ i.i.d. samples of our random variable $\mathbf{x}$. Note, that $\mathbf{x}$ can be a vector of arbitrary dimension encoding all kinds of data such as images, soundwaves etc. If we model our data with the above latent variable model, we suppose the datapoints to be generated with the involvement of $\mathbf{z}$ in the sense, that first a value $\mathbf{z}^{(i)}$ is generated from prior distribution $p_{\mathbf{\theta^*}}(\mathbf{z})$ and in the second step, $\mathbf{x}^{(i)}$ is generated from $p_{\mathbf{\theta^*}}(\mathbf{x}|\mathbf{z^{(i)}})$.
+
+Usually, $\mathbf{z}$ is assumed to have a much lower dimension and a much simpler distribution than $\mathbf{x}$. Therefore, the $\mathbf{z}$-space can be viewed as a space of encodings, where only relevant information for decoding datapoints into the high-dimensional $\mathbf{x}$-space is retained. This is interesting for us, as we're not only interested in approximations of the posterior inference of $\mathbf{z}$ given a value of $\mathbf{x}$ but also the ... %TODO
+
+For a given dataset, there is different approaches for the above scenario. However, we do make additional assumptions, that narrow the list of efficient algorithms significantly [XX]:
+
+\begin{itemize}
+	\item[1] \emph{Intractability}: the integral of the marginal likelihood $p_{\mathbf{\theta}}(\mathbf{x}) = \int p_{\mathbf{\theta}}(\mathbf{z}) p_{\mathbf{\theta}}(\mathbf{x}|\mathbf{z}) d \mathbf{z}$, as well as posterior distribution $p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x}) = p_{\mathbf{\theta}}(\mathbf{x}|\mathbf{z}) p_{\mathbf{\theta}}(\mathbf{z}) / p_{\mathbf{\theta}}(\mathbf{x})$ are intractable.
+	\item[2] \emph{Big dataset}: Batch optimization is too expensive and parameter updates on small minibatches preferable. Sampling-based solutions would be too inefficient [XX].
+\end{itemize}
+
+\section{Variational Inference}
+
+In many probabilistic models inference is intractable and approximation methods are needed. One way of approximating solutions to inference problems is to describe it as an optimization problem. Algorithms involving this approach are called \emph{variational}.
+Given an intractable probability distribution $p$ and a set of tractable distributions $\mathcal{Q}$, the goal of a variational algorithm is to find $q \in \mathcal{Q}$ that is most 'similar' to $p$. Subsequently, we can use $q$ instead of $p$ find approximate solutions to inference problems efficiently.\\
+Of course, this rather informal description on variational techniques leaves us with questions. What is the similarity of two distributions $q$ and $p$? How do we choose an according optimization objective $J(q)$? What are good ways of formulating tractable class of distributions $\mathcal{Q}$ and how can we efficiently solve our optimization problem with respect to $J(q)$? \\
+The (partial) answering to these four questions will be the main motivation for the following sections in order to lay the groundwork for the introduction of the Variational Autoencoder (VAE), a probabilistic model designed for learning latent representations with the help of Deep Neuronal Networks (DNNs).
+
+\section{Kullback-Leibler divergence}
+% https://arxiv.org/pdf/1408.4755.pdf
+Continuing with our first question, there is a way of quantifying the 'similarity' of two distributions $p$ and $q$ in information theory known as the \emph{Kullback-Leibler (KL) divergence}. For $p, q$ continuous, the KL divergence is defined as %TODO : write as expectation
+\begin{equation}
+	KL(q||p) = \int_{-\infty}^{\infty} q(x) \log \frac{q(x)}{p(x)}
+\end{equation}
+In the discrete case, it is analogously 
+\begin{equation}
+	KL(q||p) = \sum_{x} q(x) \log \frac{q(x)}{p(x)}
+\end{equation}
+Note, that for any $q, p$ (continuous or discrete) we can deduce the following properties:
+\begin{itemize}
+	\item $KL(q||p) \geq 0$
+	\item $KL(q||p) = 0$ if and only if $q = p$
+\end{itemize}
+For a proof consider .\\ %TODO
+
+Before we dive deeper into how to utilize the KL divergence for our problem, let us gain a better understanding of why it is a sound choice for measuring 'similarity'. %TODO
+
+\section{Variational Lower Bound (ELBO)}
+%TODO : motivation of maximization of px
+As we discussed previously, $p(\mathbf{x})$ as well as$p(\mathbf{z}|\mathbf{x})$ are supposed to be intractable. We have thus no way of retrieving either of the two out of the other. This is where the variational component from two sections before comes into play. In order to approximate $p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})$ we introduce a tractable \emph{parametric inference model} $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ We will optimize the so called \emph{variational parameters} $\mathbf{\phi}$ of this model such that $p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x}) \approx q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$.
+Derived from Bayes' rule, we also have
+\begin{equation}
+	p_{\mathbf{\theta}}(\mathbf{x}) = \frac{p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x}) p_{\mathbf{\theta}}(\mathbf{z})}{p_{\mathbf{\theta}}(\mathbf{x}|\mathbf{z})} \approx  \frac{p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x}) p_{\mathbf{\theta}}(\mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{x}|\mathbf{z})}
+\end{equation}
+
+It is clear, that for our model to fit the true distribution of our data well, we are interested in the following two things:
+\begin{itemize}
+	\item[1.] Maximization of the marginal likelihood $p_{\mathbf{\theta}}(\mathbf{x})$ for our data to improve our generative model.
+	\item[2.] Minimization of the KL divergence between $p_{\mathbf{\theta}}(\mathbf{x})$ and $q_{\mathbf{\phi}}(\mathbf{x})$ to improve the approximation of $q_{\mathbf{\phi}}(\mathbf{x})$.
+\end{itemize}
+
+Since the logarithm to base 2 (here abbreviated as $\log$) is monotonous, maximizing $p_{\mathbf{\theta}}(\mathbf{x})$ is equivalent to maximizing $\log p_{\mathbf{\theta}}(\mathbf{x})$. For an arbitrary choice of $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ we can consider the following derivation:
+\begin{equation}
+\begin{split}
+	\log p_{\mathbf{\theta}}(\mathbf{x}) 
+	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[\log p_{\mathbf{\theta}}(\mathbf{x})\right] \\
+	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log \frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})} \right] \\
+	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\frac{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}{p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})} \right) \right] \\
+	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] + \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}{p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})} \right) \right] \\
+	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] + KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})) 
+\end{split}
+\end{equation}
+Where the right term in the last row is the KL divergence of $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ and $p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})$. If we rearrange the equation, we have the following:
+\begin{equation}
+	\log p_{\mathbf{\theta}}(\mathbf{x}) - KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})) = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right]
+\end{equation}
+	And since $KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})) \geq 0$, the right hand side is a lower bound for $\log p_{\mathbf{\theta}}(\mathbf{x})$. It is also referred to as \emph{variational lower bound} or \emph{evidence lower bound} (ELBO) 
+\begin{equation}
+\begin{split}
+	\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x}) 
+	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] \\
+	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) \right]	\\
+	% & = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) \right] - \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[\log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) \right] \\
+	% & = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) \right] - KL()
+\end{split}
+\end{equation}
+With the above derivation in mind, we can identify another interpretation of $KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}))$ besides being the KL divergence of approximate posterior $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ and true posterior $p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}))$: It is also the gap between ELBO $\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})$ and $\log p_{\mathbf{\theta}}(\mathbf{x})$. If $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ approximates the true $p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})$ 'better', the gap gets smaller. \\
+The ELBO yields us the optimization criterion we were asking for. If we maximize $\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})$ with respect to parameters $\mathbf{\theta}$ and $\mathbf{\phi}$ we will approximately maximize $p_{\mathbf{\theta}}(\mathbf{x})$ and minimize $KL(p_{\mathbf{\theta}}(\mathbf{x}) || q_{\mathbf{\phi}}(\mathbf{x}))$ just the goals we formulated in the beginning of this section.
+
+\section{Auto-encoding Variational Bayes}
+batch optimization\\
+gradient estimator theta\\
+reparameterization trick -> gradient phi\\
+AEVB algorithmus\\
+
+\section{Neuronal Networks}
+one way of parameterizing distributions $q(z|x)$ \\
+how do they work? \\
+how to calc gradients? -> diffbare fkt\\
+
+In the context of Variational Autoencoders, Neuronal Networks, which shall be discussed in the following, are the most promising way of realizing said 
+
+\section{The Variational Auto-encoder (VAE)}
+choice of posterior q as NN
+vae algorithm
+
+Broadly speaking, Variational Autoencoders (VAE) are an instance of the AEVB algorithm described in the previous section.
+
+
+\section{Convolutional Neural Networks (CNN)}
+While standard, Fully Connected Neuronal networks offer a great way to realize the encoder and decoder of our VAE, there are approaches that work better on certain kinds of data. Convolutional Neural Networks (CNN) are a NN structure, that offers good results when applied on high-dimensional image data. The main idea with CNNs is, that images consists of recurring combinations of shapes that can be learned by lower dimensional filters. %TODO
+
+\appendix
+\chapter{Appendix Title}
+%\input{chapters/appendix}
+
+\end{document}

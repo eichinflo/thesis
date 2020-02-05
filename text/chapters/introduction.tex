@@ -1,0 +1,71 @@
+
+
+
+\section{Variational Inference}
+
+In many probabilistic models inference is intractable and approximation methods are needed. One way of approximating solutions to inference problems is to describe it as an optimization problem. Algorithms involving this approach are called \emph{variational}.
+Given an intractable probability distribution $p$ and a set of tractable distributions $\mathcal{Q}$, the goal of a variational algorithm is to find $q \in \mathcal{Q}$ that is most 'similar' to $p$. Subsequently, we can use $q$ instead of $p$ to find approximate solutions to inference problems.\\
+Of course, this rather informal description on variational techniques leaves us with questions. What is the similarity of $q \in \mathcal{q}$ and $p$? What kind of inference problems are we trying to solve? How do we choose an according optimization objective $J(q)$? What are good ways of formulating tractable class of distributions $\mathcal{Q}$ and how can we efficiently solve our optimization problem w.r.t. $J(q)$? \\
+The (partial) answering to these four questions will be the main motivation for the following sections in order to lay the groundwork for the introduction of the Variational Autoencoder (VAE), a probabilistic model designed for learning latent representations with the help of Deep Neuronal Networks (DNNs). For this purpose, many ideas of the following chapter are taken from (XX) and the notation mainly follows the same logic. %TODO
+
+explain notation + continuous/discrete
+
+\section{Inference Problem Setup}
+%TODO : Rewrite intro
+Before we dive into the technical questions of this thesis, we want to begin with our first question and discuss the framework of the problem we will attempt to solve. 
+
+Let $\mathbf{x}, \mathbf{z}$ be random variables with $\mathbf{x}$ observable and $\mathbf{z} \in \mathbb{R}^k$ hidden. Then we are interested in the \textit{latent variable model}
+
+\begin{equation}
+	p_{\theta}(\mathbf{x}, \mathbf{z}) = p_{\theta}(\mathbf{x}| \mathbf{z})p_{\theta}(\mathbf{z})
+\end{equation}
+
+In other words, if we have a dataset $\mathbf{X} = \{ x^{(i)}\}_{i=1}^N$ with i.i.d. samples of $\mathbf{x}$, we assume the data to be generated with the involvement of $\mathbf{z}$. First, a value $\mathbf{z}^{(i)}$ is generated from prior distribution $p(\mathbf{z})$. In the second step, $\mathbf{x}$ is generated from $p(\mathbf{x}|\mathbf{z})$. \\
+We are interested in the efficient approximation of the posterior inference of $\mathbf{z}$ given a value of $\mathbf{x}$
+
+For a given dataset, there is different approaches approaching the above scenario. However, we do make additional assumptions, that narrow the list of efficient algorithms significantly [XX]:
+
+\begin{itemize}
+	\item[1] \emph{Intractability}: the integral of the marginal likelihood $p(\mathbf{x}) = \int p(\mathbf{z}) p(\mathbf{x}|\mathbf{z}) d \mathbf{z}$, as well as posterior distribution $p(\mathbf{z}|\mathbf{x}) = p(\mathbf{x}|\mathbf{z}) p(\mathbf{z}) / p(\mathbf{x})$ are intractable.
+	\item[2] \emph{Big data}: Batch optimization is too expensive.
+\end{itemize}
+As for the 
+
+\section{Kullback-Leibler divergence}
+Beginning with our first question, we can define the 'similarity' of two distributions $p$ and $q$ as the \emph{Kullback-Leibler (KL) divergence}. 
+%TODO : discrete case as well
+We will stick to the continuous case, where the KL divergence is defined as
+\begin{equation}
+	KL(q||p) = \int_{-\infty}^{\infty} q(x) log \frac{q(x)}{p(x)}
+\end{equation}
+Note, that for any continuous $q, p$ we can deduce the following properties:
+\begin{itemize}
+	\item $KL(q||p) \geq 0$
+	\item $KL(q||p) = 0$ if and only if $q = p$
+\end{itemize}
+For a proof consider .\\ %TODO
+
+Before we dive deeper into how to utilize the KL divergence for our problem, let us gain a better understanding of why it is a sound choice for measuring 'similarity'. %TODO
+
+\section{Variational Lower Bound (ELBO)}
+
+
+
+%TODO : Introduce ELBO
+
+
+\section{Auto-encoding Variational Bayes}
+gradient estimator
+reparametrization trick
+
+
+\section{Neuronal Networks}
+In the context of Variational Autoencoders, Neuronal Networks, which shall be discussed in the following, are the most promising way of realizing said
+
+
+\section{The Variational Auto-encoder (VAE)}
+Broadly speaking, Variational Autoencoders (VAE) are an instance of the AEVB algorithm described in the previous section. 
+
+
+\section{Convolutional Neural Networks (CNN)}
+While standard, Fully Connected Neuronal networks offer a great way to realize the encoder and decoder of our VAE, there are approaches that work better on certain kinds of data. Convolutional Neural Networks (CNN) are a NN structure, that offers good results when applied on high-dimensional image data. The main idea with CNNs is, that images consists of recurring combinations of shapes that can be learned by lower dimensional filters. %TODO
