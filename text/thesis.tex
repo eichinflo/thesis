@@ -6,6 +6,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \graphicspath{ {images/} }
+\usepackage[ruled,vlined]{algorithm2e}
 
 \title{
 {Separation of Foreground and Background Signal in Variational Autoencoders}\\
@@ -107,7 +108,7 @@ Since the logarithm to base 2 (here abbreviated as $\log$) is monotonous, maximi
 	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log \frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})} \right] \\
 	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\frac{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}{p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})} \right) \right] \\
 	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] + \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}{p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})} \right) \right] \\
-	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] + KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})) 
+	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] + KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{z}| \mathbf{x})) 
 \end{split}
 \end{equation}
 Where the right term in the last row is the KL divergence of $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ and $p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})$. If we rearrange the equation, we have the following:
@@ -125,22 +126,125 @@ Where the right term in the last row is the KL divergence of $q_{\mathbf{\phi}}(
 \end{split}
 \end{equation}
 With the above derivation in mind, we can identify another interpretation of $KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}))$ besides being the KL divergence of approximate posterior $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ and true posterior $p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}))$: It is also the gap between ELBO $\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})$ and $\log p_{\mathbf{\theta}}(\mathbf{x})$. If $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ approximates the true $p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})$ 'better', the gap gets smaller. \\
-The ELBO yields us the optimization criterion we were asking for. If we maximize $\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})$ with respect to parameters $\mathbf{\theta}$ and $\mathbf{\phi}$ we will approximately maximize $p_{\mathbf{\theta}}(\mathbf{x})$ and minimize $KL(p_{\mathbf{\theta}}(\mathbf{x}) || q_{\mathbf{\phi}}(\mathbf{x}))$ just the goals we formulated in the beginning of this section.
+Let $\mathbf{X}$ be the dataset of i.i.d. samples from before and $N_{\mathbf{X}} = |\mathbf{X}|$. If we want to fit our model on $\mathbf{X}$, the ELBO yields us an optimization objective we were asking for, namely the average of ELBOs of single datapoints $\mathbf{x} \in \mathbf{X}$:
+\begin{equation}
+	\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{X}) = \sum_{\mathbf{x} \in \mathbf{X}} \frac{\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})}{N_{\mathbf{X}}}
+\end{equation}
+
+If we maximize $\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})$ with respect to parameters $\pmb{\theta}$ and $\pmb{\phi}$ for our data, we will approximately maximize $p_{\mathbf{\theta}}(\mathbf{x})$ and minimize $KL(p_{\mathbf{\theta}}(\mathbf{x}) || q_{\mathbf{\phi}}(\mathbf{x}))$ just like the goals we formulated in the beginning of this section.
 
 \section{Auto-encoding Variational Bayes}
-batch optimization\\
-gradient estimator theta\\
-reparameterization trick -> gradient phi\\
-AEVB algorithmus\\
+\subsection{Batch Gradient Descent}
+%TODO
+With the means of the ELBO, we now have an objective to optimize the model parameters $\pmb{\theta}$ and $\pmb{\phi}$ for. A naive solution, also known as \emph{Batch Gradient Descent}, is to initialize the parameters randomly and then to estimate the gradients $\nabla_{\pmb{\theta}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$ and $\nabla_{\pmb{\pmb{\phi}}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$ and adjust $\pmb{\theta}$ and $\pmb{\phi}$ into their respective directions until convergence. With each step of adjusting the parameters for the gradients, also called an \emph{epoch}, we expect $\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$ to improve until we have reached a local maximum. 
 
-\section{Neuronal Networks}
+\begin{algorithm}[H]
+\SetAlgoLined
+\While{not converged}{
+Estimate gradients $\nabla_{\pmb{\theta}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{M})$, $\nabla_{\pmb{\pmb{\phi}}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{M})$\\
+Update parameters $\pmb{\theta} \rightarrow \pmb{\theta} + \eta \nabla_{\pmb{\theta}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x})$, $\pmb{\phi} \rightarrow \pmb{\phi} + \eta \nabla_{\pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x})$
+}
+\caption{Batch Gradient Descent}
+\end{algorithm} 
+
+Note, how $\eta$ is a hyperparameter, that determines the amount of influence the gradients have on the parameters when updating. It is therefore also called the \emph{learning rate}. It is an important to choose $\eta$ properly as it highly affects the convergence of the algorithm: If we choose $\eta$ too small, we will only move slowly in the direction of local maxima. However, if we choose it to big, our steps get too big and the algorithm can not converge. 
+
+
+\subsection{Estimation of the gradients}
+Because in general analytical computations of the gradients of the ELBO are intractable, we have to estimate them. For $\nabla_{\pmb{\alpha}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$ with $\pmb{\alpha} = \pmb{\theta}$ or $\pmb{\phi}$, it is sufficient to estimate $\nabla_{\pmb{\alpha}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x})$ for $\mathbf{x} \in \mathbf{X}$ because since (XX) we have
+\begin{equation}
+	\nabla_{\pmb{\alpha}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X}) = \nabla_{\pmb{\alpha}}  \sum_{\mathbf{x} \in \mathbf{X}} \frac{\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})}{N_{\mathbf{X}}} = \frac{1}{N_{\mathbf{X}}} \sum_{\mathbf{x} \in \mathbf{X}} \nabla_{\pmb{\alpha}} \mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})
+\end{equation}
+For gradients of the ELBO with respect to generative model parameters $\pmb{\theta}$, it is simple to obtain an unbiased Monte Carlo estimator:
+\begin{equation}
+\begin{split}
+\nabla_{\pmb{\theta}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}) 
+& = \nabla_{\pmb{\theta}} \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) \right]	\\
+& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \nabla_{\pmb{\theta}} (\log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})) \right] \\
+& \simeq \nabla_{\pmb{\theta}} (\log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})) \\
+& = \nabla_{\pmb{\theta}} \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})
+\end{split}
+\end{equation}
+With the $\mathbf{z}$ in the last two lines being a random sample from $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$. For unbiased gradients with respect to $\pmb{\phi}$, things are a bit more difficult. This is due to the fact, that in general, we have:
+\begin{equation}
+\begin{split}
+\nabla_{\pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}) 
+& = \nabla_{\pmb{\phi}} \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) \right]	\\
+& \neq \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \nabla_{\pmb{\phi}} (\log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\pmb{\phi}}(\mathbf{z}|\mathbf{x})) \right] \\
+\end{split}
+\end{equation}
+%TODO : check argument for continuous and diff
+For $\mathbf{z}$ continuous and $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ and $p_{\mathbf{\theta}}(\mathbf{x}|\mathbf{z})$ differentiable (the case we're focussing on), we can reparameterize $\mathbf{z} \sim q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ to circumvent this problem. We can choose $f$ as some differentiable transformation and introduce another random variable $\pmb{\epsilon}$ independent of $\pmb{\phi}$ and $\mathbf{x}$ such that
+\begin{equation}
+\mathbf{z} = f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})
+\end{equation}
+This is also referred to as \emph{reparameterization trick}. With (2.12) we can rewrite our gradient as follows:
+\begin{equation}
+\begin{split}
+\nabla_{\pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}) 
+& = \nabla_{\pmb{\phi}} \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) \right]	\\
+& = \nabla_{\pmb{\phi}} \mathbb{E}_{p(\pmb{\epsilon})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})) - \log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x}) \right]	\\
+& = \mathbb{E}_{p(\pmb{\epsilon})}\left[ \nabla_{\pmb{\phi}}(\log p_{\mathbf{\theta}}(\mathbf{x}, f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})) - \log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x})) \right]	\\
+& \simeq \nabla_{\pmb{\phi}}(\log p_{\mathbf{\theta}}(\mathbf{x}, f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})) - \log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x})) \\
+\end{split}
+\end{equation}
+And the last row is again the Monte Carlo estimator for a single sample $\pmb{\epsilon} \sim p(\pmb{\epsilon})$. It is unbiased, because
+%TODO : add sums for expectations 
+\begin{equation}
+\begin{split}
+& \mathbb{E}_{p(\pmb{\epsilon})}\left[ \nabla_{\pmb{\phi}, \pmb{\theta}} \log p_{\mathbf{\theta}}(\mathbf{x}, f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})) - \log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x}) \right] \\
+= & \nabla_{\pmb{\phi}, \pmb{\theta}} \mathbb{E}_{p(\pmb{\epsilon})}\left[  \log p_{\mathbf{\theta}}(\mathbf{x}, f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})) - \log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x}) \right] \\
+\end{split}
+\end{equation}
+
+
+\subsection{Minibatch Stochastic Gradient Descent} 
+Vanilla Gradient Descent has several shortcomings, that we still have to address. For one, it is usually very expensive to estimate $\nabla_{\pmb{\theta}, \pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$ on big datasets $\mathbf{X}$, violating our goal for efficiency with large data. Also, the algorithm usually only finds the closest local maximum and has no means to escape before convergence. There is several solutions to those problems. One that tackles both is called \emph{Minibatch Stochastic Gradient Descent (SGD)}.
+\begin{algorithm}[H]
+%TODO : update with parameters etc, like in script
+\SetAlgoLined
+\While{not converged}{
+1. Randomly draw a minibatch $\mathbf{M} \in \mathbf{X}$; \\
+2. Estimate gradients $\nabla_{\pmb{\theta}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{M})$, $\nabla_{\pmb{\pmb{\phi}}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{M})$ \\
+3. Update parameters $\pmb{\theta} \rightarrow \pmb{\theta} + \eta \nabla_{\pmb{\theta}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{M})$, $\pmb{\phi} \rightarrow \pmb{\phi} + \eta \nabla_{\pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{M})$
+}
+\caption{Minibatch Stochastic Gradient Descent}
+\end{algorithm} 
+The idea behind Minibatch SGD is again intuitive: Instead of estimating the gradients on the whole dataset $\mathbf{X}$, we randomly draw a subset $\mathbf{M} \subset \mathbf{X}$ of size $N_{\mathbf{M}}$. Since for $\pmb{\alpha} = \pmb{\theta}$ or $\pmb{\phi}$ we have:
+\begin{equation}
+\nabla_{\pmb{\alpha}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X}) 
+= \frac{1}{N_{\mathbf{X}}} \sum_{\mathbf{x} \in \mathbf{X}} \nabla_{\pmb{\alpha}} \mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x}) 
+\simeq \frac{1}{N_{\mathbf{M}}} \sum_{\mathbf{x} \in \mathbf{M}} \nabla_{\pmb{\alpha}} \mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})
+= \nabla_{\pmb{\alpha}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{M}) 
+\end{equation}
+We can thus get the following unbiased gradient estimators from combining (2.10) with (2.12) and (2.13) for $\mathbf{M}'=\{(\mathbf{x}, \pmb{\epsilon}) |  \mathbf{x} \in \mathbf{M}, \pmb{\epsilon} \sim p(\pmb{\epsilon})\}$ a set of tuples of each datapoint in $\mathbf{M}$ and an according sample of $\pmb{\epsilon}$ :
+\begin{equation}
+\begin{split}
+	\nabla_{\pmb{\theta}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{M}) 
+	& \simeq \frac{1}{N_{\mathbf{M}}} \sum_{(\mathbf{x}^{(i)}, \pmb{\epsilon}^{(i)}) \in \mathbf{M}'} \nabla_{\pmb{\theta}} \log p_{\mathbf{\theta}}(\mathbf{x}, f(\pmb{\epsilon}^{(i)}, \pmb{\phi}, \mathbf{x})) \\
+	\nabla_{\pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{M}) 
+	& \simeq \frac{1}{N_{\mathbf{M}}} \sum_{(\mathbf{x}^{(i)}, \pmb{\epsilon}^{(i)}) \in \mathbf{M}'} \nabla_{\pmb{\phi}}(\log p_{\mathbf{\theta}}(\mathbf{x}^{(i)}, f(\pmb{\epsilon}^{(i)}, \pmb{\phi}, \mathbf{x})) - \log q_{\mathbf{\phi}}(f(\pmb{\epsilon}^{(i)}, \pmb{\phi}, \mathbf{x}^{(i)})|\mathbf{x}^{(i)}))  \\
+\end{split}
+\end{equation}
+
+
+
+Another problem is, that even though Minibatch SGD might converge in local maxima, the parameters it yields might be far from optimal. There is several techniques to overcome this problem and escape local maxima, but the discussion of those is not in the scope of this thesis. Consider [XX] for an in depth look.
+
+Minibatch SGD is a rather straightforward algorithm, with only two hyperparameter $N_\mathbf{M} = | \mathbf{M} | $, the size of a minibatch $\mathbf{M} \subset \mathbf{X}$ of our dataset and learning rate $\eta$. For $N_{\mathbf{M}}=1$ it is just called \emph{Stochastic Gradient Descent}.
+
+
+\subsection{Auto-Encoding Variational Bayes}
+
+\section{The Variational Auto-encoder (VAE)}
+\subsection{Neuronal Networks}
 one way of parameterizing distributions $q(z|x)$ \\
 how do they work? \\
 how to calc gradients? -> diffbare fkt\\
 
 In the context of Variational Autoencoders, Neuronal Networks, which shall be discussed in the following, are the most promising way of realizing said 
 
-\section{The Variational Auto-encoder (VAE)}
+\subsection{Neuronal Networks for Parameterizing blbla}
 choice of posterior q as NN
 vae algorithm
 
