@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.1.30)  7 FEB 2020 19:16
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.1.30)  11 FEB 2020 12:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -173,35 +173,49 @@ Package: relsize 2013/03/29 ver 4.1
 \c@algocf=\count105
 \algocf@algoframe=\box35
 \algocf@algobox=\box36
-) (./thesis.aux)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amscls/amsthm.sty
+Package: amsthm 2017/10/31 v2.20.4
+\thm@style=\toks22
+\thm@bodyfont=\toks23
+\thm@headfont=\toks24
+\thm@notefont=\toks25
+\thm@headpunct=\toks26
+\thm@preskip=\skip65
+\thm@postskip=\skip66
+\thm@headsep=\skip67
+\dth@everypar=\toks27
+)
+\c@definition=\count106
+ (./thesis.aux)
 \openout1 = `thesis.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count106
+\scratchcounter=\count107
 \scratchdimen=\dimen120
 \scratchbox=\box37
-\nofMPsegments=\count107
-\nofMParguments=\count108
-\everyMPshowfont=\toks22
-\MPscratchCnt=\count109
+\nofMPsegments=\count108
+\nofMParguments=\count109
+\everyMPshowfont=\toks28
+\MPscratchCnt=\count110
 \MPscratchDim=\dimen121
-\MPnumerator=\count110
-\makeMPintoPDFobject=\count111
-\everyMPtoPDFconversion=\toks23
+\MPnumerator=\count111
+\makeMPintoPDFobject=\count112
+\everyMPtoPDFconversion=\toks29
 ) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
 
@@ -256,14 +270,14 @@ e
 <images/logo.png, id=1, 1204.5pt x 1408.26125pt>
 File: images/logo.png Graphic file (type png)
 <use images/logo.png>
-Package pdftex.def Info: images/logo.png  used on input line 21.
+Package pdftex.def Info: images/logo.png  used on input line 26.
 (pdftex.def)             Requested size: 199.16928pt x 232.8473pt.
-LaTeX Font Info:    Try loading font information for U+msa on input line 21.
+LaTeX Font Info:    Try loading font information for U+msa on input line 26.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 21.
+LaTeX Font Info:    Try loading font information for U+msb on input line 26.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -293,7 +307,7 @@ Chapter 2.
 [7
 
 ]
-Overfull \hbox (35.36572pt too wide) in paragraph at lines 59--60
+Overfull \hbox (35.36572pt too wide) in paragraph at lines 64--65
 []\OT1/cmr/m/it/12 Intractability\OT1/cmr/m/n/12 : the in-te-gral of the margin
 al like-li-hood $\OML/cmm/m/it/12 p[]\OT1/cmr/m/n/12 (\OT1/cmr/bx/n/12 x\OT1/cm
 r/m/n/12 ) = [] \OML/cmm/m/it/12 p[]\OT1/cmr/m/n/12 (\OT1/cmr/bx/n/12 z\OT1/cmr
@@ -303,15 +317,15 @@ r/m/n/12 ) = [] \OML/cmm/m/it/12 p[]\OT1/cmr/m/n/12 (\OT1/cmr/bx/n/12 z\OT1/cmr
  []
 
 [8]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 82.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 87.
  (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 82.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 87.
  [9] [10] [11]
 [12] [13]
-Overfull \hbox (34.6033pt too wide) detected at line 236
+Overfull \hbox (34.6033pt too wide) detected at line 241
 \OMS/cmsy/m/n/12 r[]L[]\OT1/cmr/m/n/12 (\OT1/cmr/bx/n/12 M\OT1/cmr/m/n/12 ) \OM
 S/cmsy/m/n/12 ' [] [] r[]\OT1/cmr/m/n/12 ([] \OML/cmm/m/it/12 p[]\OT1/cmr/m/n/1
 2 (\OT1/cmr/bx/n/12 x[]\OML/cmm/m/it/12 ; f\OT1/cmr/m/n/12 ([][]\OML/cmm/m/it/1
@@ -321,21 +335,16 @@ S/cmsy/m/n/12 ' [] [] r[]\OT1/cmr/m/n/12 ([] \OML/cmm/m/it/12 p[]\OT1/cmr/m/n/1
 12 x[]\OT1/cmr/m/n/12 ))
  []
 
-[14]
-Underfull \hbox (badness 10000) in paragraph at lines 263--266
-
- []
-
-[15] [16]
+[14] [15] [16] [17]
 Appendix A.
-[17
+[18
 
 ] (./thesis.aux) ) 
 Here is how much of TeX's memory you used:
- 3397 strings out of 494510
- 47544 string characters out of 6176236
- 131087 words of memory out of 5000000
- 7018 multiletter control sequences out of 15000+600000
+ 3472 strings out of 494510
+ 48457 string characters out of 6176236
+ 132391 words of memory out of 5000000
+ 7089 multiletter control sequences out of 15000+600000
  13977 words of font info for 53 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  41i,20n,27p,1272b,386s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -354,10 +363,10 @@ s/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
 sy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb
 >
-Output written on thesis.pdf (18 pages, 548134 bytes).
+Output written on thesis.pdf (19 pages, 558909 bytes).
 PDF statistics:
- 125 PDF objects out of 1000 (max. 8388607)
- 87 compressed objects within 1 object stream
+ 129 PDF objects out of 1000 (max. 8388607)
+ 90 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

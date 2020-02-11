@@ -8,6 +8,11 @@
 \graphicspath{ {images/} }
 \usepackage[ruled,vlined]{algorithm2e}
 
+\usepackage{amsthm}
+ 
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
 \title{
 {Separation of Foreground and Background Signal in Variational Autoencoders}\\
 {\large Albert-Ludwigs-Universität Freiburg}\\[\baselineskip]
@@ -256,21 +261,51 @@ Note, how not only the minibatch drawing of SGD, but also the sampling of $\epsi
 
 
 \section{The Variational Auto-encoder (VAE)}
+\subsection{Choice of posteriors}
+
+The definition of the AEVB algorithm left some choices regarding the exact nature of the final model. Namely:
+\begin{itemize}
+\item the parameterization of decoder model $p_{\pmb{\theta}}(\mathbf{x}|\mathbf{z})$
+\item the parameterization for the variational encoder model $q_{\pmb{\phi}}(\mathbf{z}|\mathbf{x})$
+\item the distribution of $\mathbf{z}$ and it's reparameterization $f$
+\end{itemize}
+The definition of the AEVB algorithm left some more choices regarding the exact nature of the final model. We also need to specify the nature of $p_{\pmb{\theta}}(\mathbf{x}|\mathbf{z})$, which has to be complex enough to model the  data sufficiently well. 
+
 \subsection{Neuronal Networks}
-Recalling our questions from the beginning of this chapter, we want to now look at an instance of AEVB algorithm and have a look at one possible choice of 
+An Artificial Neural Network (ANN) is a composition of \emph{layers} $\alpha^{(i)}$ with $L$ the number of layers.
+\begin{equation}
+NeuralNet = \alpha^{(L)} \circ \alpha^{(L-1)} \circ ... \circ \alpha^{(1)}
+\end{equation}
+For each $i \in \{2, ..., L\} $ we define \emph{weight matrix} $W^{(i)} \in Mat(M^{(i)} \times N^{(i)}, \mathbb{R})$, \emph{bias vector} $b^{(i)} \in \mathbb{R}^{M^{(i)}}$ and \emph{activation function} $g^{(i)}: \mathbb{R} \rightarrow \mathbb{R}$.  Layer $\alpha^{(i)}$ maps a vector of \emph{input dimension} $N^{(i)}$ to a vector of \emph{output dimension} $M^{(i)}$ as follows:
+\begin{equation}
+\begin{split}
+\alpha^{(i)}: \mathbb{R}^{N^{(i)}} & \rightarrow \mathbb{R}^{M^{(i)}} \\
+x & \mapsto g^{(i)}(W^{(i)}x+b^{(i)})\\
+\end{split}
+\end{equation}
+These are also called the \emph{hidden layers} of our network and $\alpha^{(L)}$ is the \emph{output layer}. By convention, we define \emph{input layer} $\alpha^{(1)}$ as the identity of the input vector of the network. To match neighbouring input and output dimensions of the layers, we further require $M^{(i-1)} = N^{(i)}$ for $i \in \{2, ..., L\}$ with $M^{(1)}$ the dimension of the input of the network.
+Usually the activation functions $g^{(i)}$, which are applied element-wise, are chosen to be non-linear, or else $\alpha$ would just be a linear function and the ANN would deflate into a single linear function as well. 
+In order for an ANN to 'learn' we interpret $\pmb{\phi} = \{W^{(2)},  b^{(2)}, W^{(3)},  b^{(3)}, ..., W^{(L)},  b^{(L)}\}$ as parameters, that we can update with respect to their gradients while optimizing. Therefore, $g^{(i)}$ has to be differentiable. Common activation functions include many others:
+\begin{itemize}
+\item sigmoid function $Sig(x) = \frac{1}{1 - \exp(-kx)}$ with $k \in \mathbb{R}$
+\item rectifier function $ReLu(x) = \max(0, x)$ 
+\item tangens hyperbolicus $tanh$
+\end{itemize} 
+And while each has it's own perks, some are better suited for different tasks. For example, in practice, a big advantage of $ReLu$ is the faster convergence of optimization tasks. On the other hand, $tanh$ and $Sig$ sometimes offer better interpretability of the results as they have values in $(0, 1)$. \\
+They gradients with respect to the parameters $\pmb{\phi}$ of a NeuralNetwork can be calculated using a procedure called \emph{Backpropagation}, which exploits the chain rule of differentiation to compute the gradients. Another approach that is currently evolving is \emph{differentiable programming}, where the key idea is to compute derivatives for defined functions automatically. In the case of neural networks, there is only matrix multiplications, vector additions and the usually simple activation functions which makes them a promising application for differential programming. 
+
+\subsection{Neural Networks for parameterizing encoder}
+We can use ANNs to parameterize the encoder as a simple factorized Gaussian as follows:
+\begin{equation}
+\begin{split}
+q_{\pmb{\phi}}(\mathbf{z}|\mathbf{x}) & = \mathcal{N}(\pmb{\mu}, \mathrm{diag}(\pmb{\sigma})^2)(\mathbf{z}) \\
+(\pmb{\mu}, \log \pmb{\sigma}) & = NeuralNet_{\pmb{\phi}}(\mathbf{x}) \\
+q_{\pmb{\phi}}(\mathbf{z}|\mathbf{x}) & = \prod_i q_{\pmb{\phi}}(\mathbf{z}_i|\mathbf{x}) = \prod_i \mathcal{N}(\pmb{\mu}_i, \pmb{\sigma}_i^2)(\mathbf{z}_i)\\
+\end{split}
+\end{equation}
+Together with the reparameterization trick (XX) %TODO
 
 
-one way of parameterizing distributions $q(z|x)$ \\
-how do they work? \\
-how to calc gradients? -> diffbare fkt\\
-
-In the context of Variational Autoencoders, Neuronal Networks, which shall be discussed in the following, are the most promising way of realizing said 
-
-\subsection{Neuronal Networks for Parameterizing blbla}
-choice of posterior q as NN
-vae algorithm
-
-Broadly speaking, Variational Autoencoders (VAE) are an instance of the AEVB algorithm described in the previous section.
 
 
 \section{Convolutional Neural Networks (CNN)}
