@@ -150,9 +150,9 @@ batches = get_batches(data, batch_size = 5)
 # the naming scheme of the respective comonents works accordingly
 
 ## vae1 with small receptive field of size (5, 5)
-conv_enc1 = Conv((6, 6), 1 => 32, relu, pad = 2, stride = (3, 3))  # e.g. convolution of encoder of vae1
+conv_enc1 = Conv((6, 6), 1 => 16, relu, pad = 2, stride = (3, 3))  # e.g. convolution of encoder of vae1
 pool_enc1 = MaxPool((3, 3), stride = (2, 2), pad = 0)
-conv2_enc1 = Conv((2, 2), 32 => latent_dim1, stride = (1, 1), pad = 0)
+conv2_enc1 = Conv((2, 2), 16 => latent_dim1, stride = (1, 1), pad = 0)
 # compute data size after pooling in order to determine size after flattening
 flattened_size1 = no_of_entries(x -> conv2_enc1(pool_enc1(conv_enc1(x))))
 # mean and log-variance of vae1's z-variable
@@ -163,13 +163,13 @@ interaction1 = Dense(latent_dim1, inter1^2 * latent_dim1)
 # 'deconvolutions' of vae1's decoder
 transp1_dec1 = ConvTranspose(
     (2, 2),
-    latent_dim1 => 32,
+    latent_dim1 => 16,
     relu,
     stride = (1, 1),
     pad = 0,
 )
-transp2_dec1 = ConvTranspose((3, 3), 32 => 32, relu, stride = (2, 2), pad = 0)
-transp3_dec1 = ConvTranspose((6, 6), 32 => 1, sigmoid, stride = (3, 3), pad = 0)
+transp2_dec1 = ConvTranspose((3, 3), 16 => 16, relu, stride = (2, 2), pad = 0)
+transp3_dec1 = ConvTranspose((6, 6), 16 => 1, sigmoid, stride = (3, 3), pad = 0)
 # final decoder layer, we might want to drop this actually TODO
 dense_dec1 = Dense(60 * 60, 60 * 60, sigmoid)
 
@@ -320,7 +320,7 @@ if scaled_vae2
         output_enc = enc2(X)
         μ̂, logσ̂ = μ2(output_enc), logσ2(output_enc)
         # TODO find appropriate scaling
-        return (logp_x_z2(y, z.(μ̂, logσ̂))*100 - kl_q_p(μ̂, logσ̂)) * 1 // batch_size
+        return (logp_x_z2(y, z.(μ̂, logσ̂)) - kl_q_p(μ̂, logσ̂)) * 1 // batch_size
     end
     mc2(x) = (L(x...))
 end
@@ -483,7 +483,7 @@ if scaled_vae2
         logp_x_z1 = log_p_x_z(i1, X, dec1)
         #TODO find appropriate scaling! Same above in mc2...
         logp_x_z2 = log_p_x_z(i2, y, dec2) * 100
-        klqp = kl_q_p(mu1, log1) + kl_q_p(mu2, log2)
+        klqp = kl_q_p(mu1, log1)*300 + kl_q_p(mu2, log2)
         return (logp_x_z1 + logp_x_z2 - klqp) * 1 // batch_size
     end
     mc_dual(x) = mc_scal(x...)
