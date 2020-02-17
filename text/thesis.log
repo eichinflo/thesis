@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.1.30)  11 FEB 2020 12:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.1.30)  16 FEB 2020 18:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -307,7 +307,7 @@ Chapter 2.
 [7
 
 ]
-Overfull \hbox (35.36572pt too wide) in paragraph at lines 64--65
+Overfull \hbox (35.36572pt too wide) in paragraph at lines 66--67
 []\OT1/cmr/m/it/12 Intractability\OT1/cmr/m/n/12 : the in-te-gral of the margin
 al like-li-hood $\OML/cmm/m/it/12 p[]\OT1/cmr/m/n/12 (\OT1/cmr/bx/n/12 x\OT1/cm
 r/m/n/12 ) = [] \OML/cmm/m/it/12 p[]\OT1/cmr/m/n/12 (\OT1/cmr/bx/n/12 z\OT1/cmr
@@ -317,12 +317,12 @@ r/m/n/12 ) = [] \OML/cmm/m/it/12 p[]\OT1/cmr/m/n/12 (\OT1/cmr/bx/n/12 z\OT1/cmr
  []
 
 [8]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 87.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 89.
  (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 87.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 89.
  [9] [10] [11]
 [12] [13]
 Overfull \hbox (34.6033pt too wide) detected at line 241
@@ -335,9 +335,14 @@ S/cmsy/m/n/12 ' [] [] r[]\OT1/cmr/m/n/12 ([] \OML/cmm/m/it/12 p[]\OT1/cmr/m/n/1
 12 x[]\OT1/cmr/m/n/12 ))
  []
 
-[14] [15] [16] [17]
+[14] [15]
+Underfull \hbox (badness 10000) in paragraph at lines 271--272
+
+ []
+
+[16] [17] [18]
 Appendix A.
-[18
+[19
 
 ] (./thesis.aux) ) 
 Here is how much of TeX's memory you used:
@@ -347,7 +352,7 @@ Here is how much of TeX's memory you used:
  7089 multiletter control sequences out of 15000+600000
  13977 words of font info for 53 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 41i,20n,27p,1272b,386s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 41i,20n,27p,1272b,384s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
 /cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8
 .pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
@@ -363,10 +368,10 @@ s/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
 sy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb
 >
-Output written on thesis.pdf (19 pages, 558909 bytes).
+Output written on thesis.pdf (20 pages, 562822 bytes).
 PDF statistics:
- 129 PDF objects out of 1000 (max. 8388607)
- 90 compressed objects within 1 object stream
+ 132 PDF objects out of 1000 (max. 8388607)
+ 92 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
