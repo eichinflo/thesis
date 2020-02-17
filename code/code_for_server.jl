@@ -6,7 +6,6 @@ using Flux: @epochs, mse
 using Base.Iterators: partition  # for creating batches
 using Flux: Conv, MaxPool, Dense, ConvTranspose
 using JLD2  # store model parameters for later
-using Markdown
 using Distributions  # to compute loss function
 using MAT  # for importing dummydata
 using Random
@@ -25,6 +24,7 @@ train_seperately = true  # train vae1 and vae2 seperately before combination
 epochs_dual = 1  # epochs of combined training
 epochs_vae1 = 1  # epochs of seperate training for vae1
 epochs_vae2 = 1  # epochs of seperate training for vae1
+callbacks = 50
 
 # model
 latent_dim1 = 4  # number of z-variaables for vae1
@@ -130,7 +130,7 @@ end
 
 ########################### load data###########################################
 data = get_dummy_data(
-    "/home/flo/projects/thesis/dummydata/dummyData2000.mat",
+    string(path_to_project, "../dummydata/dummyData2000.mat"),
     binary = binary,
 )
 
@@ -339,7 +339,7 @@ if train_seperately
         ps1,
         zip(batches),
         optimizer1,
-        cb = Flux.throttle(evalcb1, 5),
+        cb = Flux.throttle(evalcb1, callbacks),
     )
 
     if scaled_vae2
@@ -349,7 +349,7 @@ if train_seperately
             ps2,
             zip(batches_scaled),
             optimizer2,
-            cb = Flux.throttle(evalcb_scal, 5),
+            cb = Flux.throttle(evalcb_scal, callbacks),
             )
     else
         # train cvae2 (big receptive field)
@@ -358,7 +358,7 @@ if train_seperately
             ps2,
             zip(batches),
             optimizer2,
-            cb = Flux.throttle(evalcb2, 20),
+            cb = Flux.throttle(evalcb2, callbacks),
             )
     end
 end
@@ -508,7 +508,7 @@ if !scaled_vae2
         ps,
         zip(batches),
         opt,
-        cb = Flux.throttle(evalcb, 10),
+        cb = Flux.throttle(evalcb, callbacks),
     )
 else
     @epochs epochs_dual Flux.train!(
@@ -516,7 +516,7 @@ else
         ps,
         zip(batches_scaled),
         opt,
-        cb = Flux.throttle(evalcb, 10),
+        cb = Flux.throttle(evalcb, callbacks),
     )
 end
 
