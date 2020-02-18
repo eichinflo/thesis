@@ -53,18 +53,18 @@ function plot_output_for(image, vae, title)
     )
 end
 
-function make_superduperplot(;from=1, to=100, z2_on=true)
+function make_superduperplot(vae1_out, vae2_out;from=1, to=100, z2_on=true)
     sequence = [reshape(data[:, :, :, i], (60, 60, 1, 1)) for i = 1:size(
         data,
         4,
     )][from:to]
     gif1 = @animate for i = from:to
-        plot_reconstruction(i, sequence, data_scaled)
+        plot_reconstruction(i, sequence, data_scaled, vae1_out, vae2_out)
     end
     gif(gif1, "reconstructed_super.gif")
 end
 
-function plot_reconstruction(i, sequence, data_scaled)
+function plot_reconstruction(i, sequence, data_scaled, vae1_out, vae2_out)
     out3 = vae2_out(sequence[i])
     out3 = reshape(Flux.Tracker.data(out3), (2, 2))
     plt3 = Plots.heatmap(
