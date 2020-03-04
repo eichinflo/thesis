@@ -52,11 +52,12 @@ Before we dive into the technical questions of this thesis, we want to begin wit
 \begin{equation}
 	p_{\mathbf{\theta^*}}(\mathbf{x}, \mathbf{z}) = p_{\mathbf{\theta^*}}(\mathbf{x}| \mathbf{z})p_{\mathbf{\theta^*}}(\mathbf{z})
 \end{equation}
-We further assume that prior $p_{\mathbf{\theta^*}}(\mathbf{z})$ and $p_{\mathbf{\theta^*}}(\mathbf{x}|\mathbf{z})$ are from parametric families of distributions $p_{\mathbf{\theta}}(\mathbf{z})$ and $p_{\mathbf{\theta}}(\mathbf{x}|\mathbf{z})$ and that they have probability density functions that are differantiable with respect to $\mathbf{\theta}$ and $\mathbf{z}$ almost everywhere.
+We further assume that prior $p_{\mathbf{\theta^*}}(\mathbf{z})$ and $p_{\mathbf{\theta^*}}(\mathbf{x}|\mathbf{z})$ are from parametric families of distributions $p_{\mathbf{\theta}}(\mathbf{z})$ and $p_{\mathbf{\theta}}(\mathbf{x}|\mathbf{z})$ and that they have probability density functions that are differentiable with respect to $\mathbf{\theta}$ and $\mathbf{z}$ almost everywhere.
 
 To make things clearer, we can  look at it in a more practical way: Let $\mathbf{X} = \{ \mathbf{x}^{(i)}\}_{i=1}^N$ be a dataset with $N$ i.i.d. samples of our random variable $\mathbf{x}$. Note, that $\mathbf{x}$ can be a vector of arbitrary dimension encoding all kinds of data such as images, soundwaves etc. If we model our data with the above latent variable model, we suppose the datapoints to be generated with the involvement of $\mathbf{z}$ in the sense, that first a value $\mathbf{z}^{(i)}$ is generated from prior distribution $p_{\mathbf{\theta^*}}(\mathbf{z})$ and in the second step, $\mathbf{x}^{(i)}$ is generated from $p_{\mathbf{\theta^*}}(\mathbf{x}|\mathbf{z^{(i)}})$. 
-Usually, $\mathbf{z}$ is assumed to have a much lower dimension and a much simpler distribution than $\mathbf{x}$. Therefore, the $\mathbf{z}$-space can be viewed as a space of encodings, where only relevant information for decoding datapoints into the high-dimensional $\mathbf{x}$-space is retained. From a machine learning perspective, we can identify this model with an dimensionality reduction problem: For our data, we want to learn functions $q_{\phi}: \mathcal{X} \rightarrow \mathcal{Z}$, $p_{\theta}: \mathcal{Z} \rightarrow \mathcal{X}$ such that for our data $\mathbf{X} \approx p_{\theta}(q_{\phi}(\mathbf{X}))$, constrained the low dimension and regularization of $\mathcal(Z)$. In other words, we want an encode our data $\mathbf{X}$ with minimal reconstruction loss when decoding it again and define $q_{\phi}$ and $p_{\theta}$ as encoder and decoder respectively. REWORK
+Usually, $\mathbf{z}$ is assumed to have a much lower dimension and a much simpler distribution than $\mathbf{x}$. Therefore, the $\mathbf{z}$-space can be viewed as a space of encodings, where only relevant information for decoding datapoints into the high-dimensional $\mathbf{x}$-space is retained. This is why, from a machine learning perspective, we refer to 
 
+can identify this model with an dimensionality reduction problem: For our data, we want to learn functions $q_{\phi}: \mathcal{X} \rightarrow \mathcal{Z}$, $p_{\theta}: \mathcal{Z} \rightarrow \mathcal{X}$ such that for our data $\mathbf{X} \approx p_{\theta}(q_{\phi}(\mathbf{X}))$, constrained by the low dimension and regularization of $\mathcal(Z)$. 
 
 This is interesting for us, as we're not only interested in approximations of the posterior inference of $\mathbf{z}$ given a value of $\mathbf{x}$ but also the ... %TODO
 
@@ -68,9 +69,9 @@ For a given dataset, there is different approaches for the above scenario. Howev
 \end{itemize}
 
 \section{Variational Inference}
-
+%TODO same notation as above
 In many probabilistic models inference is intractable and approximation methods are needed. One way of approximating solutions to inference problems is to describe it as an optimization problem. Algorithms involving this approach are called \emph{variational}.
-Given an intractable probability distribution $p$ and a set of tractable distributions $\mathcal{Q}$, the goal of a variational algorithm is to find $q \in \mathcal{Q}$ that is most 'similar' to $p$. Finding such a $q$ usually involves a complex optimization procedure for an optimization target $J(q)$. Subsequently, we can use $q$ instead of $p$ in order to find approximate solutions to inference problems efficiently.\\
+Given an intractable probability distribution $p^*$ and a set of tractable distributions $\mathcal{Q}$, the goal of a variational algorithm is to find $q \in \mathcal{Q}$ that is most 'similar' to $p$. Finding such a $q$ usually involves a complex optimization procedure for an optimization target $J(q)$. Subsequently, we can use $q$ instead of $p$ in order to find approximate solutions to inference problems efficiently.\\
 Of course, this rather informal description on variational techniques leaves us with questions. What is the similarity of two distributions $q$ and $p$? How do we choose an according optimization objective $J(q)$? What are good ways of formulating tractable class of distributions $\mathcal{Q}$? \\
 The (partial) answering to these four questions will be the main motivation for the following sections in order to lay the groundwork for the introduction of the Variational Autoencoder (VAE). Inheriting it's name from \emph{Autoencoders}[XX], a VAE is a probabilistic model designed for learning latent representations with the help of Artificial Neuronal Networks (ANNs) and a variational optimization approach to the approximation of the encoder distribution.
 
@@ -78,13 +79,13 @@ The (partial) answering to these four questions will be the main motivation for 
 % https://arxiv.org/pdf/1408.4755.pdf
 Beggining with our first question, there is a way of quantifying the 'similarity' of two distributions $p(\mathbf{x})$ and $q(\mathbf{x})$ in information theory known as the \emph{Kullback-Leibler (KL) divergence}. For $p(\mathbf{x}), q(\mathbf{x})$ continuous, the KL divergence is defined as %TODO : write as expectation
 \begin{equation}
-	KL(q(\mathbf{x})||p(\mathbf{x})) = \int_{\mathbf{x}} q(\mathbf{x}) \log \frac{q(\mathbf{x})}{p(\mathbf{x})} d \mathbf{x} = \mathbb{E}_{q(\mathbf{x})}\left[ \log\left(\frac{q(\mathbf{x})}{p(\mathbf{x})} \right) \right]
+	KL(q(\mathbf{x})||p(\mathbf{x})) = \int_{-\infty}^{\infty} q(\mathbf{x}) \log \frac{q(\mathbf{x})}{p(\mathbf{x})} d \mathbf{x} = \mathbb{E}_{q(\mathbf{x})}\left[ \log\left(\frac{q(\mathbf{x})}{p(\mathbf{x})} \right) \right]
 \end{equation}
 In the discrete case, it is analogously 
 \begin{equation}
 	KL(q(\mathbf{x})||p(\mathbf{x})) = \sum_{\mathbf{x}} q(\mathbf{x}) \log \frac{q(\mathbf{x})}{p(\mathbf{x})} = \mathbb{E}_{q(\mathbf{x})}\left[ \log\left(\frac{q(\mathbf{x})}{p(\mathbf{x})} \right) \right]
 \end{equation}
-Here, $\log$ is an abbreviation for the logarithm to base $2$. Note, that for any $q(\mathbf{x}), p(\mathbf{x})$ (continuous or discrete) we can deduce the following properties:
+Here, $\log$ is an abbreviation for the logarithm to base $e$, the natural logarithm. Note, that for any $q(\mathbf{x}), p(\mathbf{x})$ (continuous or discrete) we can deduce the following properties:
 \begin{itemize}
 	\item $KL(q||p) \geq 0$
 	\item $KL(q||p) = 0$ if and only if $q = p$ (QUESTION: Do we need this???)
@@ -101,7 +102,7 @@ KL(q(\mathbf{x})||p(\mathbf{x}))
 \end{equation}
 And '$=$' $ \Leftrightarrow \frac{p(\mathbf{x})}{q(\mathbf{x})} = 1 \Leftrightarrow p(\mathbf{x})=q(\mathbf{x})$.
 
-Before we dive deeper into how to utilize the KL divergence for our problem, let us gain a better understanding of why it is a sound choice for measuring 'similarity'. %TODO
+% Before we dive deeper into how to utilize the KL divergence for our problem, let us gain a better understanding of why it is a sound choice for measuring 'similarity'. %TODO
 
 \section{Variational Lower Bound (ELBO)}
 %TODO : motivation of maximization of px
@@ -130,30 +131,38 @@ Since $\log$ is monotonous, maximizing $p_{\mathbf{\theta}}(\mathbf{x})$ is equi
 \end{equation}
 Where the right term in the last row is the KL divergence of $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ and $p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})$. If we rearrange the equation, we have the following:
 \begin{equation}
-	\log p_{\mathbf{\theta}}(\mathbf{x}) - KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})) = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right]
+	\log p_{\mathbf{\theta}}(\mathbf{x}) - KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{z}| \mathbf{x})) = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right]
 \end{equation}
 	And since $KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})) \geq 0$, the right hand side is a lower bound for $\log p_{\mathbf{\theta}}(\mathbf{x})$. It is also referred to as \emph{variational lower bound} or \emph{evidence lower bound} (ELBO):
 \begin{equation}
 \begin{split}
 	\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x}) 
 	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] \\
-	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) \right]	\\
-	% & = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) \right] - \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[\log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) \right] \\
-	% & = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) \right] - KL()
+	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) \right] \\\\
 \end{split}
 \end{equation}
-With the above derivation in mind, we can identify another interpretation of $KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}))$ besides being the KL divergence of approximate posterior $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ and true posterior $p_{\mathbf{\theta}}(\mathbf{x}| \mathbf{z}))$: It is also the gap between ELBO $\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})$ and $\log p_{\mathbf{\theta}}(\mathbf{x})$. If $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ approximates the true $p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})$ 'better', the gap gets smaller.
+The ELBO can be rewritten in the following way:
+\begin{equation}
+\begin{split}
+& \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] \\
+& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}|\mathbf{z})p_{\mathbf{\theta}}(\mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] \\
+	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}| \mathbf{z}) - \log \frac{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}{p_{\mathbf{\theta}}(\mathbf{z})} \right]	\\
+	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}| \mathbf{z})\right] - \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[\log \frac{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}{p_{\mathbf{\theta}}(\mathbf{z})} \right]	\\
+	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}| \mathbf{z})\right] + KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})||p_{\mathbf{\theta}}(\mathbf{z}))\\	
+\end{split}
+\end{equation}
+With the above derivation in mind, we can identify another interpretation of $KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{x}|\mathbf{z}))$ besides being the KL divergence of approximate posterior $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ and true posterior $p_{\mathbf{\theta}}(\mathbf{x}| \mathbf{z}))$: It is also the gap between ELBO $\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})$ and $\log p_{\mathbf{\theta}}(\mathbf{x})$. If $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ approximates the true $p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})$ 'better', the gap gets smaller.
 
 Let $\mathbf{X}$ be the dataset of i.i.d. samples from before and $N_{\mathbf{X}} = |\mathbf{X}|$. If we want to fit our model on $\mathbf{X}$, the ELBO yields us an optimization objective we were asking for, namely the average of ELBOs of single datapoints $\mathbf{x} \in \mathbf{X}$:
 \begin{equation}
 	\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{X}) = \sum_{\mathbf{x} \in \mathbf{X}} \frac{\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})}{N_{\mathbf{X}}}
 \end{equation}
-If we maximize $\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})$ with respect to parameters $\pmb{\theta}$ and $\pmb{\phi}$ for our data, we will approximately maximize $p_{\mathbf{\theta}}(\mathbf{x})$ and minimize $KL(p_{\mathbf{\theta}}(\mathbf{x}) || q_{\mathbf{\phi}}(\mathbf{x}))$ just like the goals we formulated in the beginning of this section.
+If we maximize $\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})$ with respect to parameters $\pmb{\theta}$ and $\pmb{\phi}$ for our data, we will approximately maximize $p_{\mathbf{\theta}}(\mathbf{x})$ and minimize $KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{z}| \mathbf{x}))$ just like the goals we formulated in the beginning of this section.
 
 \section{Auto-encoding Variational Bayes}
 \subsection{Batch Gradient Descent}
 %TODO
-With the means of the ELBO, we now have an objective to optimize the model parameters $\pmb{\theta}$ and $\pmb{\phi}$ for. A naive solution, also known as \emph{Batch Gradient Descent}, is to initialize the parameters randomly, to estimate the gradients $\nabla_{\pmb{\theta}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$ and $\nabla_{\pmb{\pmb{\phi}}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$ and adjust $\pmb{\theta}$ and $\pmb{\phi}$ into their respective directions until convergence. With each step of adjusting the parameters for the gradients, also called an \emph{epoch}, we expect $\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$ to improve until we have reached a local maximum and the algorithm converges. It is up to implementation how to detect convergence of the algorithm. Typically, one can define criteria such as a threshold for change of loss after a certain number of epochs epoch. If the change of loss is lower than this set threshhold, we abort the procedure. Of course, there is other, more complex criteria. Sometimes the user decides theirselves, when to stop the algorithm due to the tradeoff between runtime and optimality. A further discussion can be found in [XX].
+With the means of the ELBO, we now have an objective to optimize the model parameters $\pmb{\theta}$ and $\pmb{\phi}$ for. A naive solution, also known as \emph{Batch Gradient Descent}, is to initialize the parameters randomly, to estimate the gradients $\nabla_{\pmb{\theta}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$ and $\nabla_{\pmb{\pmb{\phi}}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$ and adjust $\pmb{\theta}$ and $\pmb{\phi}$ into their respective directions until convergence. With each step of adjusting the parameters for the gradients, also called an \emph{epoch}, we expect $\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$ to improve until we have reached a local maximum and the algorithm converges. It is up to implementation how to detect convergence of the algorithm. Typically, one can define criteria such as a threshold for change of loss after a certain number of epochs epoch. If the change of loss is lower than this set threshhold, we abort the procedure. Of course, there is other, more complex criteria. Sometimes the user decides theirselves, when to stop the algorithm due to the tradeoff between runtime and optimality.
 \begin{algorithm}[H]
 \SetAlgoLined
 \While{not converged}{
@@ -165,22 +174,22 @@ Update parameters $\pmb{\theta} \rightarrow \pmb{\theta} + \eta \nabla_{\pmb{\th
 Note, that $\eta$ is a hyperparameter, that determines the extent to which the gradients update the parameters for each epoch. It is therefore also called the \emph{learning rate} and is an important parameter to choose as it highly affects the convergence of the algorithm: If we choose $\eta$ too small, we will only move slowly in the 'preferred' direction of local maxima. However, if we choose $\eta$ too big, our updating-steps get too large and the algorithm cannot converge in the worst case. 
 
 
-\subsection{Estimation of the gradients}
-Because in general analytical computations of the gradients of the ELBO are intractable, we have to estimate them. For $\nabla_{\pmb{\theta}, \pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$, it is sufficient to estimate $\nabla_{\pmb{\theta}, \pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x})$ for $\mathbf{x} \in \mathbf{X}$ because since (XX) we have
+\subsection{Estimation of the gradients and ELBO}
+Because in general analytical computations of the gradients of the ELBO are intractable, we have to estimate them. For $\nabla_{\pmb{\theta}, \pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$, it is sufficient to estimate $\nabla_{\pmb{\theta}, \pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x})$ for each $\mathbf{x} \in \mathbf{X}$ because since (XX) we have
 \begin{equation}
 	\nabla_{\pmb{\theta}, \pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X}) = \nabla_{\pmb{\theta}, \pmb{\phi}}  \sum_{\mathbf{x} \in \mathbf{X}} \frac{\mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})}{N_{\mathbf{X}}} = \frac{1}{N_{\mathbf{X}}} \sum_{\mathbf{x} \in \mathbf{X}} \nabla_{\pmb{\theta}, \pmb{\phi}} \mathcal{L}_{\mathbf{\theta}, \mathbf{\phi}}(\mathbf{x})
 \end{equation}
-For gradients of the ELBO with respect to generative model parameters $\pmb{\theta}$, it is simple to obtain an unbiased Monte Carlo estimator:
+For gradients of the ELBO with respect to generative model parameters $\pmb{\theta}$, we can obtain an unbiased Monte Carlo estimator (unbiased estimation will from now on be illustrated by '$\simeq$'):
 \begin{equation}
 \begin{split}
 \nabla_{\pmb{\theta}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}) 
-& = \nabla_{\pmb{\theta}} \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) \right]	\\
+& \stackrel{(XX)}{=} \nabla_{\pmb{\theta}} \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) \right]	\\
 & = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \nabla_{\pmb{\theta}} (\log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})) \right] \\
 & \simeq \nabla_{\pmb{\theta}} (\log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})) \\
 & = \nabla_{\pmb{\theta}} \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})\\
 \end{split}
 \end{equation}
-With the $\mathbf{z}$ in the last two lines being a random sample from $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$. For unbiased gradients with respect to $\pmb{\phi}$, things are a bit more difficult. This is due to the fact, that in general, we have:
+With the $\mathbf{z}$ in the last two lines a random sample from $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$. For unbiased gradients with respect to $\pmb{\phi}$, things are a bit more difficult. This is due to the fact, that in general, we have:
 \begin{equation}
 \begin{split}
 \nabla_{\pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}) 
@@ -189,23 +198,32 @@ With the $\mathbf{z}$ in the last two lines being a random sample from $q_{\math
 \end{split}
 \end{equation}
 %TODO : check argument for continuous and diff
-Moreover, we will thus assume $\mathbf{z}$ to be continuous and $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ and $p_{\mathbf{\theta}}(\mathbf{x}|\mathbf{z})$ differentiable. For the case of the Variational Autoencoder (and other instances of our problem), we are not constrained by this. However, we can now reparameterize $\mathbf{z} \sim q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ to circumvent the problem of obtaining $\nabla_{\pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x})$. We choose $f$ as some differentiable transformation and introduce another random variable $\pmb{\epsilon}$ independent of $\pmb{\phi}$, $\pmb{\theta}$ and $\mathbf{x}$ such that
+Moreover, we will thus assume $\mathbf{z}$ to be continuous and $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ and $p_{\mathbf{\theta}}(\mathbf{x}|\mathbf{z})$ differentiable. For the case of the Variational Autoencoder (and other instances of our problem), we are not constrained by this. However, we can now reparameterize $\mathbf{z} \sim q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ to circumvent the problem of obtaining $\nabla_{\pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x})$. We can choose $f$ as some invertible, differentiable transformation and introduce another random variable $\pmb{\epsilon} \sim p(\pmb{\epsilon})$ independent of $\pmb{\phi}$, $\pmb{\theta}$ and $\mathbf{x}$ such that
 \begin{equation}
 \mathbf{z} = f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})
 \end{equation}
-This is also referred to as \emph{reparameterization trick}. With (2.12) we can rewrite our gradient as follows:
+This is also referred to as \emph{reparameterization trick}. Under reparameterization, the ELBO can be rewritten:
+\begin{equation}
+\begin{split}
+\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}) 
+& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})\right]\\
+& = \mathbb{E}_{p(\pmb{\epsilon})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})) - \log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x}) \right]	\\
+& \simeq \log p_{\mathbf{\theta}}(\mathbf{x}, f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})) - \log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x})\\
+& =: \tilde{\mathcal{L}}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}, \pmb{\epsilon})\\
+\end{split}
+\end{equation}
+Where we used a single sample $\pmb{\epsilon}\sim p(\pmb{\epsilon})$ to derive the Monte Carlo estimator $\tilde{\mathcal{L}}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}, \pmb{\epsilon})$. We can rewrite our gradients and  gain an estimator in a similar fashion:
 \begin{equation}
 \begin{split}
 \nabla_{\pmb{\theta}, \pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}) 
-& = \nabla_{\pmb{\theta}, \pmb{\phi}} \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z}) - \log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) \right]	\\
 & = \nabla_{\pmb{\theta}, \pmb{\phi}} \mathbb{E}_{p(\pmb{\epsilon})}\left[ \log p_{\mathbf{\theta}}(\mathbf{x}, f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})) - \log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x}) \right]	\\
 & = \mathbb{E}_{p(\pmb{\epsilon})}\left[ \nabla_{\pmb{\theta}, \pmb{\phi}}(\log p_{\mathbf{\theta}}(\mathbf{x}, f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})) - \log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x})) \right]	\\
 & \simeq \nabla_{\pmb{\theta}, \pmb{\phi}}(\log p_{\mathbf{\theta}}(\mathbf{x}, f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})) - \log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x})) \\
-& =: \nabla_{\pmb{\theta}, \pmb{\phi}}\tilde{\mathcal{L}}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}, \pmb{\epsilon})
+& = \nabla_{\pmb{\theta}, \pmb{\phi}}\tilde{\mathcal{L}}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}, \pmb{\epsilon})
 \end{split}
 \end{equation}
-And with $\tilde{\mathcal{L}}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}, \pmb{\epsilon}) := \log p_{\mathbf{\theta}}(\mathbf{x}, f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})) - \log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x})$ the last row is a Monte Carlo estimator for a single sample $\pmb{\epsilon} \sim p(\pmb{\epsilon})$. 
-It is unbiased because:
+Again with the last two rows a Monte Carlo estimator for a single sample $\pmb{\epsilon} \sim p(\pmb{\epsilon})$. 
+Both estimators are unbiased because:
 %TODO : add sums for expectations 
 \begin{equation}
 \begin{split}
@@ -216,7 +234,18 @@ It is unbiased because:
 & = \nabla_{\pmb{\theta}, \pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}) 
 \end{split}
 \end{equation}
-Also, $\tilde{\mathcal{L}}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}, \pmb{\epsilon})$ is an unbiased estimator for $\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x})$ with an analog argument.
+Which works with an analog argument for $\tilde{\mathcal{L}}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}, \pmb{\epsilon})$. In order to compute this estimation of the ELBO and its gradients, we will need to compute $\log q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})=\log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x})$. 
+We will use a result from Statistics, called the \emph{Change-of-Variables Technique} [XX], which yields us 
+\begin{equation}
+q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x}) \left|\det \left(\frac{\partial}{\partial \pmb{\epsilon}}f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})\right)\right| = p(\pmb{\epsilon})
+\end{equation}
+Where $\left|\det \left(\frac{\partial}{\partial \pmb{\epsilon}}f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})\right)\right|$ is the absolute value of the determinant of the Jacobian. Putting it together, we thus have: 
+\begin{equation}
+\begin{split}
+\log q_{\mathbf{\phi}}(f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})|\mathbf{x}) & = \log p(\pmb{\epsilon}) - \log \left|\det \left(\frac{\partial}{\partial \pmb{\epsilon}}f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})\right)\right| \\
+\end{split}
+\end{equation}
+For many choices of reparameterizations, this is simple to compute, as we will see in the following chapters.
 
 
 \subsection{Stochastic Gradient Descent} 
@@ -252,7 +281,7 @@ Putting things together, we can now introduce the \emph{Auto-Encoding Variationa
 Initialize parameters $\pmb{\theta}$, $\pmb{\phi}$ randomly\\
 \While{not converged}{
 Randomly draw a minibatch $\mathbf{M} \subset \mathbf{X}$\\
-Sample $\pmb{\epsilon} \sim p(\pmb{\epsilon})$\\
+Sample $\pmb{\epsilon}_1, ..., \pmb{\epsilon}_{N_\mathbf{M}} \sim p(\pmb{\epsilon})$\\
 Compute $\tilde{\mathcal{L}}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{M})$ and estimate gradient $\nabla_{\pmb{\theta}, \pmb{\phi}}\tilde{\mathcal{L}}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{M})$\\
 Update parameters $\pmb{\theta}$, $\pmb{\phi}$
 }\caption{Auto-Encoding Variational Bayes (AEVB)}
@@ -260,18 +289,8 @@ Update parameters $\pmb{\theta}$, $\pmb{\phi}$
 Note, how not only the minibatch drawing of SGD, but also the sampling of $\epsilon \sim p(\epsilon)$ introduces noise to the procedure. This makes it even more robust to getting stuck in local maxima, for the reasosns discussed above. Also, we have replaced the parameter updating in order to account for more complex strategies of different instances of this algorithm. While simply updating the parameters in the direction of the gradients with a set learning rate $\eta$ is still a viable approach, there is other variations that can lead to better results for different application domains. A more detailed discussion can be found in [XX].
 
 
-\section{The Variational Auto-encoder (VAE)}
-\subsection{Choice of model}
-
-The definition of the AEVB algorithm left some options regarding the exact nature of the final model. Namely, we still have to choose:
-\begin{itemize}
-\item[1)] the parameterization of decoder model $p_{\pmb{\theta}}(\mathbf{x}|\mathbf{z})$
-\item[2)] the parameterization for the variational encoder model $q_{\pmb{\phi}}(\mathbf{z}|\mathbf{x})$
-\end{itemize}
-We want 1) to be complex enough to model the data sufficiently well. 2) brings us back to our last question from the beginning of this chapter, where we asked for a good way to formulate a the variational class of tractable distributions. As announced before, the Variational Autoencoder uses different Artificial Neural N\\
-
-\subsection{Artificial Neural Networks}
-As announced before, the Variational Autoencoder answers this question with a very popular class of algorithms called \emph{Artificial Neural Networks} (ANN), that have gained a lot of attention due to their stellar performance in many different domains of machine learning lately. An ANN is a function composed by \emph{layers} $\alpha^{(i)}$: 
+\section{Artificial Neural Networks}
+\emph{Artificial Neural Networks} (ANN) have gained a lot of attention due to their stellar performance in many different domains of machine learning lately. An ANN is a function composed by \emph{layers} $\alpha^{(i)}$: 
 \begin{equation}
 NeuralNet = \alpha^{(L)} \circ \alpha^{(L-1)} \circ ... \circ \alpha^{(1)}
 \end{equation}
@@ -291,27 +310,107 @@ In order to enable an ANN to 'learn' $\pmb{\phi} = \{W^{(2)},  b^{(2)}, W^{(3)},
 \item tangens hyperbolicus $tanh$
 \end{itemize} 
 And while each has it's own perks, some are better suited for different tasks. For example, in practice, a big advantage of $ReLu$ is the faster convergence of optimization tasks. On the other hand, $tanh$ and historically important $Sig$ sometimes offer better interpretability of the results as they have values in $(0, 1)$. \\
-The gradients with respect to the parameters $\pmb{\phi}$ of a NeuralNetwork can be calculated using a procedure called \emph{Backpropagation}, which exploits the chain rule of differentiation to compute the gradients. Another approach that is currently evolving is \emph{differentiable programming}, where the key idea is to compute derivatives for defined functions automatically. In the case of neural networks, there is only matrix multiplications, vector additions and the usually simple activation functions which makes them a promising application for differential programming. 
+The gradients with respect to the parameters $\pmb{\phi}$ of a NeuralNetwork can be calculated using a procedure called \emph{Backpropagation}, which exploits the chain rule of differentiation. Another approach that is currently evolving is \emph{differentiable programming}, where the key idea is to compute derivatives for defined functions automatically at compiling time. In the case of neural networks, there is only matrix multiplications, vector additions and the usually simple activation functions which makes them a promising application for differential programming.
 
-\subsection{Neural Networks for parameterizing encoder}
-We can use ANNs to parameterize the encoder as a simple factorized Gaussian with mean $\pmb{\mu}$ and log-deviation $\log \pmb{\sigma}$ the output of an ANN with parameters $\pmb{\phi}$ like before:
+\section{The Variational Auto-encoder (VAE)}
+\subsection{Choice of model}
+
+The definition of the AEVB algorithm left some options regarding the exact nature of the final model. Namely, we still have to choose:
+\begin{itemize}
+\item[1)] the parameterization of decoder $p_{\pmb{\theta}}(\mathbf{x}|\mathbf{z})$
+\item[2)] the distribution of prior $p_{\pmb{\theta}}(\mathbf{z})$ and its reparameterization $\mathbf{z} = f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})$
+\item[3)] the parameterization for the variational encoder $q_{\pmb{\phi}}(\mathbf{z}|\mathbf{x})$
+\end{itemize}
+We want 1) to be complex enough to model the data sufficiently well. 3) brings us back to our last question from the beginning of this chapter, where we asked for a good way to formulate a the variational class of tractable distributions. 
+ 
+
+\subsection{Neural Networks for parameterizing distributions}
+For the VAE, we let $p_{\pmb{\theta}}(\mathbf{x}|\mathbf{z})$ be a multivariate normal Distribution (for continuous data) or Bernoulli (binary data). We can model the parameters $\pmb{\mu}, \pmb{\Sigma}$ or $\mathbf{p}$ for both cases as the outputs of an ANN with parameters $\pmb{\theta}$:
+\begin{equation}
+\begin{split}
+p_{\pmb{\theta}}(\mathbf{x}|\mathbf{z}) & = \mathcal{N}(\pmb{\mu}, \pmb{\Sigma})(\mathbf{z}) \ \mathrm{or} \ \mathcal{B}(\mathbf{p})(\mathbf{z}) \\
+(\pmb{\mu}, \pmb{\Sigma}) \ \mathrm{or} \ \mathbf{p} & = DecoderANN_{\pmb{\theta}}(\mathbf{x}) \\
+\end{split}
+\end{equation}
+Furthermore, we let $p_{\pmb{\theta}}(\mathbf{z})=\mathcal{N}(0, E)(\mathbf{x})$ with $E=\mathrm{diag}(1)$ be the centered isotropic multivariate normal Distribution. In this case,  $p_{\pmb{\theta}}(\mathbf{z}|\mathbf{x})$ is intractable and we choose $q_{\pmb{\phi}}(\mathbf{z}|\mathbf{x})=\mathcal{N}(\pmb{\mu}, \pmb{\sigma}^2 E)(\mathbf{x})$ assuming the true posterior to approximately be a multivariate normal distribution with diagonal covariance. Again, we can use an ANN to parameterize mean $\pmb{\mu}$ and log-deviation $\log \pmb{\sigma}$ of the variational posterior in the following sense: 
 \begin{equation}
 \begin{split}
 q_{\pmb{\phi}}(\mathbf{z}|\mathbf{x}) & = \mathcal{N}(\pmb{\mu}, \mathrm{diag}(\pmb{\sigma})^2)(\mathbf{z}) \\
 (\pmb{\mu}, \log \pmb{\sigma}) & = NeuralNet_{\pmb{\phi}}(\mathbf{x}) \\
-q_{\pmb{\phi}}(\mathbf{z}|\mathbf{x}) & = \prod_i q_{\pmb{\phi}}(\mathbf{z}_i|\mathbf{x}) = \prod_i \mathcal{N}(\pmb{\mu}_i, \pmb{\sigma}_i^2)(\mathbf{z}_i)\\
 \end{split}
 \end{equation}
-Together with the reparameterization trick (XX) %TODO
-
-\subsection{Variational Autoencoder }
+% Note, that with these assumptions, we have:
+%\begin{equation}
+%\begin{split}
+%q_{\pmb{\phi}}(\mathbf{z}|\mathbf{x}) & = \prod_i q_{\pmb{\phi}}(\mathbf{z}_i|\mathbf{x}) = \prod_i \mathcal{N}(\pmb{\mu}_i, \pmb{\sigma}_i^2)(\mathbf{z}_i)\\
+%\end{split}
+%\end{equation}
+Reparameterization in this case is simple:
+\begin{equation}
+\begin{split}
+\pmb{\epsilon} & \sim \mathcal{N}(0, E) \\
+(\pmb{\mu}, \log \pmb{\sigma}) & = NeuralNet_{\pmb{\phi}}(\mathbf{x}) \\
+\mathbf{z} & = f(\pmb{\epsilon}, \pmb{\phi}, \pmb{x}) = \pmb{\mu} + \pmb{\sigma} \cdot \pmb{\epsilon}\\
+\end{split}
+\end{equation}
+with $\cdot$ the element-wise multiplication. And the Jacobian from $\pmb{\epsilon}$ to $\mathbf{z} = f(\pmb{\epsilon}, \pmb{\phi}, \pmb{x})$ is:
+\begin{equation}
+\frac{\partial}{\partial \pmb{\epsilon}}f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x}) = \frac{\partial \mathbf{z}}{\partial \pmb{\epsilon}} = \mathrm{diag}(\pmb{\sigma})
+\end{equation}
+With (XX), we can thus compute the log-posterior density by:
+\begin{equation}
+\begin{split}
+\log q_{\pmb{\phi}}(\mathbf{z}|\mathbf{x}) & = \log p(\pmb{\epsilon}) - \log \left|\det \left(\frac{\partial}{\partial \pmb{\epsilon}}f(\pmb{\epsilon}, \pmb{\phi}, \mathbf{x})\right)\right| \\
+& = \log p(\pmb{\epsilon}) - \sum_i \log \pmb{\sigma}_i \\
+& = \sum_i \left(\log \mathcal{N}(0, 1)(\pmb{\epsilon}_i) - \log \pmb{\sigma}_i \right)
+\end{split}
+\end{equation}
+As for the decoder, we can just insert the respective densities to compute $\log p_{\pmb{\theta}}(\mathbf{x}|\mathbf{z})$. For a normal distribution like above and $N$ the dimension of our input datapoints, we have:
+\begin{equation}
+\begin{split}
+\log p_{\pmb{\theta}}(\mathbf{x}|\mathbf{z}) 
+& = \log \left( (2\pi)^{-\frac{N}{2}}det(\pmb{\sigma}^2 E)^{-\frac{1}{2}} e^{-\frac{1}{2}(\mathbf{x}-\pmb{\mu})^T(\pmb{\sigma}^2 E)^{-1}(\mathbf{x}-\pmb{\mu})}\right) \\
+& = - \frac{1}{2} \left( N \log2\pi + \sum_{i=1}^N \log\pmb{\sigma}_i^2 + \sum_{j=1}^N \frac{(\mathbf{x}_j - \pmb{\mu}_j)^2}{\pmb{\sigma}_j^2} \right) \\
+& = - \frac{1}{2} \sum_{i=1}^N \left(\log(2\pi\pmb{\sigma}_i^2) + \frac{(\mathbf{x}_i - \pmb{\mu}_i)^2}{\pmb{\sigma}_i^2} \right) \\
+\end{split}
+\end{equation}
+And for a Bernoulli distribution we can derive in the same way:
+\begin{equation}
+\begin{split}
+\log p_{\pmb{\theta}}(\mathbf{x}|\mathbf{z}) 
+& = \log \left(\prod_{i=1}^N \mathbf{p}_i^{\mathbf{x}_i}(1-\mathbf{p}_i)^{1-\mathbf{x}_i}\right) \\
+& = \sum_{i=1}^N \mathbf{x}_i \log(\mathbf{p}_i) + (1 - \mathbf{x}_i) \log(1 - \mathbf{p}_i)
+\end{split}
+\end{equation}
+And with $p(\mathbf{x}, \mathbf{z}) = p(\mathbf{x}|\mathbf{z})p(\mathbf{z})$, we have now all the tools to compute the estimator of the ELBO $\tilde{\mathcal{L}}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x}, \pmb{\epsilon})$ and its gradients and thus all the results to make AEVB work. With this setup of a Gaussian prior and variational encoder, as well as a Gaussian/Bernoulli generative model parametereized by ANNs, we call this instance of AEVB algorithm the \emph{Variational Autencoder} (VAE). Before we dive into the implementation and results of this thesis, we will discuss some further theoretical results that are more specific to the application of the VAE on the problem dataset. 
 
 
 \section{Convolutional Neural Networks (CNN)}
-While standard, Fully Connected Neuronal networks offer a great way to realize the encoder and decoder of our VAE, there are approaches that work better on certain kinds of data. Convolutional Neural Networks (CNN) are a NN structure, that offers good results when applied on high-dimensional image data. The main idea with CNNs is, that images consists of recurring combinations of shapes that can be learned by lower dimensional filters. %TODO
+While standard, Fully Connected Neuronal networks offer a great way to realize the encoder and decoder of our VAE, there are approaches that work better on certain kinds of data. \emph{Convolutional Neural Networks} (CNN) are an ANN structure, that offers good results when applied on high-dimensional image data. The main idea with CNNs is, that images consist of recurring combinations of shapes that can be learned by lower dimensional \emph{filters}, which are basically smaller neural nets applied to multiple positions in the image. 
 
-\appendix
-\chapter{Appendix Title}
-%\input{chapters/appendix}
+\section{Dual VAE setup}
+Let $\tilde{\mathbf{z}}_1 = i_1(\mathbf{z}_1, \mathbf{z}_2)$ and $\tilde{\mathbf{z}}_2 = i_2(\mathbf{z}_1, \mathbf{z}_2)$ be the interactions of $\mathbf{z}_1$ and $\mathbf{z}_2$ and $g$ be a scaling function, that maps high-dimensional ....
+\begin{equation}
+\begin{split}
+ & \log p_{\mathbf{\theta}}(\mathbf{x}) + \log r_{\mathbf{\iota}}(g(\mathbf{x}))   \\
+	= \ & \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[\log p_{\mathbf{\theta}}(\mathbf{x})\right] + \mathbb{E}_{s_{\mathbf{\chi}}(\mathbf{z}|\mathbf{x})}\left[\log r_{\mathbf{\iota}}(g(\mathbf{x}))\right] \\
+	= \ & \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log \frac{p_{\mathbf{\theta}}(\mathbf{x}, \tilde{\mathbf{z}}_1)}{p_{\mathbf{\theta}}(\tilde{\mathbf{z}}_1|\mathbf{x})} \right] 
+	+ \mathbb{E}_{s_{\mathbf{\chi}}(\mathbf{z}|\mathbf{x})}\left[ \log \frac{r_{\mathbf{\iota}}(g(\mathbf{x}), \tilde{\mathbf{z}}_2)}{r_{\mathbf{\iota}}(\tilde{\mathbf{z}}_2|g(\mathbf{x}))} \right] \\
+	= \ & ... \\
+	= \ & \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \tilde{\mathbf{z}}_1)}{q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x})}\right) \right] + KL(q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x}) || p_{\mathbf{\theta}}(\tilde{\mathbf{z}}_2| \mathbf{x})) \\
+	& + \mathbb{E}_{s_{\mathbf{\chi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{r_{\mathbf{\iota}}(g(\mathbf{x}), \tilde{\mathbf{z}}_2)}{s_{\mathbf{\chi}}(\mathbf{z}_2|\mathbf{x})}\right) \right] + KL(s_{\mathbf{\chi}}(\mathbf{z}_2|\mathbf{x}) || r_{\mathbf{\iota}}(\tilde{\mathbf{z}}_2| g(\mathbf{x})) \\
+\end{split}
+\end{equation}
+
+%	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] + \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}{p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})} \right) \right] \\
+%	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] + KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{z}| \mathbf{x})) \\
+
+
+
+\chapter{Application}
+For this thesis, a dataset was provided to evaluate the performance of different variations of VAEs for the problem of separating foreground and background signal in images of neuronal activity inside of a mouse brain. The images were obtained using a technique called \emph{2-photon BLBKL}, where a special camera used to film multiple layers of brain cells. Each image has a very tight spatial focus on one layer of cells, making it vulnerable to background signal emmited by cells in layers beneath. Their activity usually pans out across large sectors of the image making it harder to gain information about foreground signal by the cells located in the focussed layer. The real world data in this scenario suffers from many other problems that have to be addressed as well by preprocessing steps and more complex models. Also dimensionality is usually very high, requiring expensive training. 
+Therefore, for the experiments of this thesis, a dummy dataset has been provided to simulate the basic problem setting and allow for more efficient evaluation of the different scenarios to be discussed in the following. The dataset consists of $N_{\mathbf{X}} = 2000$ images with 60x60 pixels. Within each image, there are different 6x6 sectors, that independently are either on or off
+
+In the following, details of the implementation of a VAE and results  
 
 \end{document}

@@ -4,15 +4,15 @@
 \contentsline {section}{\numberline {2.2}Variational Inference}{8}% 
 \contentsline {section}{\numberline {2.3}Kullback-Leibler divergence}{9}% 
 \contentsline {section}{\numberline {2.4}Variational Lower Bound (ELBO)}{10}% 
-\contentsline {section}{\numberline {2.5}Auto-encoding Variational Bayes}{11}% 
-\contentsline {subsection}{\numberline {2.5.1}Batch Gradient Descent}{11}% 
-\contentsline {subsection}{\numberline {2.5.2}Estimation of the gradients}{12}% 
+\contentsline {section}{\numberline {2.5}Auto-encoding Variational Bayes}{12}% 
+\contentsline {subsection}{\numberline {2.5.1}Batch Gradient Descent}{12}% 
+\contentsline {subsection}{\numberline {2.5.2}Estimation of the gradients and ELBO}{12}% 
 \contentsline {subsection}{\numberline {2.5.3}Stochastic Gradient Descent}{14}% 
-\contentsline {subsection}{\numberline {2.5.4}Stochastic Optimization of the ELBO}{15}% 
-\contentsline {section}{\numberline {2.6}The Variational Auto-encoder (VAE)}{15}% 
-\contentsline {subsection}{\numberline {2.6.1}Choice of model}{15}% 
-\contentsline {subsection}{\numberline {2.6.2}Artificial Neural Networks}{16}% 
-\contentsline {subsection}{\numberline {2.6.3}Neural Networks for parameterizing encoder}{17}% 
-\contentsline {subsection}{\numberline {2.6.4}Variational Autoencoder }{17}% 
-\contentsline {section}{\numberline {2.7}Convolutional Neural Networks (CNN)}{17}% 
-\contentsline {chapter}{\numberline {A}Appendix Title}{19}% 
+\contentsline {subsection}{\numberline {2.5.4}Stochastic Optimization of the ELBO}{16}% 
+\contentsline {section}{\numberline {2.6}Artificial Neural Networks}{16}% 
+\contentsline {section}{\numberline {2.7}The Variational Auto-encoder (VAE)}{17}% 
+\contentsline {subsection}{\numberline {2.7.1}Choice of model}{17}% 
+\contentsline {subsection}{\numberline {2.7.2}Neural Networks for parameterizing distributions}{18}% 
+\contentsline {section}{\numberline {2.8}Convolutional Neural Networks (CNN)}{20}% 
+\contentsline {section}{\numberline {2.9}Dual VAE setup}{20}% 
+\contentsline {chapter}{\numberline {3}Application}{21}% 

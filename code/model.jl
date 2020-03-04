@@ -71,6 +71,9 @@ enc2(X) =
 "Sample z variable for mean μ and log(variance) logσ."
 z(μ, logσ) = μ + exp(logσ) * randn(Float32)
 
+z(μ, logσ, eps) = μ + exp(logσ) * eps
+
+
 "Compute output of seperate interaction of vae1."
 int1(X) = apply_and_reshape(X, interaction1, (inter1, inter1, latent_dim1, :))
 
@@ -102,11 +105,55 @@ function cvae2(X)
     return dec2(int2(z2))
 end
 
+"Compute output of vae2 for data X in WHCN order."
+function cvae2_scal(X)
+    encoded = enc2(X)
+    z2 = z.(μ2(encoded), logσ2(encoded))
+    return dec2_scal(int2(z2))
+end
+
 "KL-divergence between approximation posterior and N(0, 1) prior."
 kl_q_p(μ, logσ) = 0.5 * sum(exp.(2 .* logσ) + μ .^ 2 .- 1 .- (2 .* logσ))
 
-"logp(x|z) - conditional probability of data given latents."
-log_p_x_z(z, X, dec) = sum(my_logpdf.(Bernoulli.(dec(z)), X))
+
+if binary
+    "logp(x|z) - conditional probability of data given latents."
+    log_p_x_z(z, X, dec) = sum(my_logpdf.(Bernoulli.(dec(z)), X))
+else
+    # so far we assume \sigma^2 = 1 as we're only interested in images
+    "logp(x|z) - conditional probability of data given latents."
+    log_p_x_z(z, X, dec) = -0.5 * sum(log(2 * pi) .+ (dec(z) .- X).^2)
+end
+
+log_p_z1(z) = sum(logpdf_norm.(z))
+log_p_z2(z) = sum(logpdf_norm.(z))
+
+eps1_distr = MvNormal(zeros(latent_dim1), zeros(latent_dim1) .+ 1)
+eps2_distr = MvNormal(zeros(latent_dim2), zeros(latent_dim2) .+ 1)
+
+log_q_z_x(ϵ, log_sigma) = sum(logpdf_norm.(ϵ) - log_sigma)
+
+logpdf_norm(x) = -log(sqrt(2*pi)) - 0.5 * x^2
+
+"Abstract loss function."
+function L(X, y, enc, μ, logσ, logp_x_z, logq_z_x, eps_distr, logp_z)
+    output_enc = enc(X)
+    μ̂, logσ̂ = μ(output_enc), logσ(output_enc)
+    ϵ = rand(eps_distr, size(logσ̂)[2])
+    z_ = z.(μ̂, logσ̂, ϵ)
+    return (logp_x_z(y, z_) + logp_z(z_)  - log_q_z_x(ϵ, logσ̂ )) * 1 // batch_size
+end
+
+"Loss for vae1 i.e. monte carlo estimator of ELBO1."
+L1(X) = L(X, X, enc1, μ1, logσ1, logp_x_z1, log_q_z_x, eps1_distr, log_p_z1)
+
+"Loss for vae2 without scaling i.e. monte carlo estimator of ELBO2."
+L2(X) = L(X, X, enc2, μ2, logσ2, logp_x_z2, log_q_z_x, eps2_distr, log_p_z2)
+
+f(X, y) = L(X, y, enc2, μ2, logσ2, logp_x_z2_scal, log_q_z_x, eps2_distr, log_p_z2)
+
+"Loss for vae2 with scaling i.e. monte carlo estimator of ELBO2."
+L2_scal(x) = f(x...)
 
 "logp(x|z) - conditional probability of data given latents."
 logp_x_z1(X, z) = log_p_x_z(z, X, x -> dec1(int1(x)))
@@ -118,20 +165,20 @@ logp_x_z2(X, z) = log_p_x_z(z, X, x -> dec2(int2(x)))
 logp_x_z2_scal(X, z) = log_p_x_z(z, X, x -> dec2_scal(int2(x)))
 
 "Monte Carlo estimator of mean ELBO using samples X."
-function L(X, y, enc, μ, logσ, logp_x_z)
-    output_enc = enc(X)
-    μ̂, logσ̂ = μ(output_enc), logσ(output_enc)
-    return (logp_x_z(y, z.(μ̂, logσ̂)) - kl_q_p(μ̂, logσ̂)) * 1 // batch_size
-end
+#function L(X, y, enc, μ, logσ, logp_x_z)
+#    output_enc = enc(X)
+#    μ̂, logσ̂ = μ(output_enc), logσ(output_enc)
+#    return (logp_x_z(y, z.(μ̂, logσ̂)) - kl_q_p(μ̂, logσ̂)) * 1 // batch_size
+#end
 "Monte Carlo estimator of mean ELBO using samples X."
-L1(X) = L(X, X, enc1, μ1, logσ1, logp_x_z1)
+# L1(X) = L(X, X, enc1, μ1, logσ1, logp_x_z1)
 
 "Monte Carlo estimator of mean ELBO using samples X."
-L2(X) = L(X, X, enc2, μ2, logσ2, logp_x_z2)
+# L2(X) = L(X, X, enc2, μ2, logσ2, logp_x_z2)
 
-f(X, y) = L(X, y, enc2, μ2, logσ2, logp_x_z2_scal)
+# f(X, y) = L(X, y, enc2, μ2, logσ2, logp_x_z2_scal)
 "Monte Carlo estimator of mean ELBO using samples X and target y for vae2."
-L2_scal(x) = f(x...)
+# L2_scal(x) = f(x...)
 
 # parameters of our vaes
 ps1 = Flux.params(
@@ -146,6 +193,7 @@ ps1 = Flux.params(
 )
 ps2 = Flux.params(
     conv_enc2,
+
     μ2,
     logσ2,
     interaction2,
@@ -211,6 +259,7 @@ end
 "Just an abstraction of @epochs and Flux.train! for the vae2 with scaled target."
 function train_vae2_scal(batches, epochs)
     # train cvae2 (big receptive field)
+    print("Training scaled vae2...")
     @epochs epochs Flux.train!(
         loss2_scal,
         ps2_scal,
@@ -218,6 +267,7 @@ function train_vae2_scal(batches, epochs)
         optimizer2_scal,
         cb = Flux.throttle(evalcb2_scal, callbacks),
     )
+    print("done. \n")
 end
 
 # some functions to realize interaction
@@ -258,6 +308,8 @@ function interaction(X1, X2)
     return (i1, i2)
 end
 
+interaction_v(X) = interaction(X[1:latent_dim1], X[latent_dim1+1:latent_dim1+latent_dim2])
+
 "Compute output of dual vae. switch_off sets respective z variable to 0.
 Returns a tuple with outputs for vae1 and vae2 respectively."
 function dual_vae_out(X; switch_off_z1 = false, switch_off_z2 = false, scal=true)
@@ -282,12 +334,16 @@ end
 
 
 "Compute output of vae1 in dual vae."
-vae1_out(X) = dual_vae_out(X)[1]
+vae1_out_scal(X) = dual_vae_out(X)[1]
 
 "Compute output of vae2 in dual vae."
 vae2_out_scal(X) = dual_vae_out(X)[2]
 
-vae2_out(X) = dual_vae_out(X, scal=false)[2]
+"Compute output of vae1 in dual vae."
+vae1_out_scal_o(X) = dual_vae_out(X, switch_off_z2=true)[1]
+
+"Compute output of vae2 in dual vae."
+vae2_out_scal_o(X) = dual_vae_out(X, switch_off_z2=true)[2]
 
 # train both vaes with interaction enabled
 ps_dual = Flux.params(
@@ -322,19 +378,33 @@ ps_dual_scal = Flux.params(
     scaled_dec
 )
 
-"MC estimator of ELBO for dual vae."
-function _L_dual(X, y; dec2=dec2_scal, scal_logp=1, scal_kl=1)
+"MC estimator of ELBO1 and ELBO2 for dual vae."
+function _L_dual(X, y; dec2=dec2_scal, scal_logp=1, scal_q=1)
     out1, out2 = enc1(X), enc2(X)
     mu1, log1, mu2, log2 = μ1(out1), logσ1(out1), μ2(out2), logσ2(out2)
-    z1, z2 = z.(mu1, log1), z.(mu2, log2)
+    eps1, eps2 = rand(eps1_distr, size(log1)[2]), rand(eps2_distr, size(log2)[2])
+    z1, z2 = z.(mu1, log1, eps1), z.(mu2, log2, eps2)
     i1, i2 = interaction(z1, z2)
-    logp_x_z1 = log_p_x_z(i1, X, dec1)
-    logp_x_z2 = log_p_x_z(i2, y, dec2) * scal_logp
-    klqp = kl_q_p(mu1, log1) * scal_kl + kl_q_p(mu2, log2)
-    return (logp_x_z1 + logp_x_z2 - klqp) * 1 // batch_size
+    logp_x_z1 = log_p_x_z(i1, X, dec1) + log_p_z1(i1)
+    logp_x_z2 = (log_p_x_z(i2, y, dec2) + log_p_z2(i2)) * scal_logp
+    logqzx = log_q_z_x(eps1, log1) + log_q_z_x(eps2, log2) * scal_q
+    return (logp_x_z1 + logp_x_z2 - logqzx) * 1 // batch_size
 end
+
+"MC estimator of ELBO1 and ELBO2 for dual vae."
+function L(X, y, enc, μ, logσ, logp_x_z, logq_z_x, eps_distr, logp_z)
+    output_enc = enc(X)
+    μ̂, logσ̂ = μ(output_enc), logσ(output_enc)
+    ϵ = rand(eps_distr, size(logσ̂)[2])
+    z_ = z.(μ̂, logσ̂, ϵ)
+    return (logp_x_z(y, z_) + logp_z(z_)  - log_q_z_x(ϵ, logσ̂ )) * 1 // batch_size
+end
+
+"MC estimator of ELBO1 and ELBO2 for dual vae."
 L_dual(X) = _L_dual(X, X, dec2=dec2)
-L_dual_scal(x) = _L_dual(x...)
+
+"MC estimator of ELBO1 and ELBO2 for dual vae."
+L_dual_scal(x) = _L_dual(x...,scal_logp=450)
 
 reg_dual() = reg1() + reg2()
 reg_dual_scal() = reg1() + reg2_scal()
