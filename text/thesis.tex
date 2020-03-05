@@ -388,29 +388,50 @@ And with $p(\mathbf{x}, \mathbf{z}) = p(\mathbf{x}|\mathbf{z})p(\mathbf{z})$, we
 \section{Convolutional Neural Networks (CNN)}
 While standard, Fully Connected Neuronal networks offer a great way to realize the encoder and decoder of our VAE, there are approaches that work better on certain kinds of data. \emph{Convolutional Neural Networks} (CNN) are an ANN structure, that offers good results when applied on high-dimensional image data. The main idea with CNNs is, that images consist of recurring combinations of shapes that can be learned by lower dimensional \emph{filters}, which are basically smaller neural nets applied to multiple positions in the image. 
 
-\section{Dual VAE setup}
-Let $\tilde{\mathbf{z}}_1 = i_1(\mathbf{z}_1, \mathbf{z}_2)$ and $\tilde{\mathbf{z}}_2 = i_2(\mathbf{z}_1, \mathbf{z}_2)$ be the interactions of $\mathbf{z}_1$ and $\mathbf{z}_2$ and $g$ be a scaling function, that maps high-dimensional ....
+\section{Double ELBO optimization}
+When working with real world data such as images, we're usually confronted with a mix of layers of information that are in focus and others that are not. We want to refer to the former as foreground and the latter as background. For various applications it is desireable to seperate foreground and background signal in such data. Taking this as motivation, we want to expand our Variational Autoencoder in order to perform such a task. 
+So far, we have assumed that the generation process of our data involved only one multi-dimensional latent variable and one distribution. However, we can consider two seperate latent variables $\mathbf{z}_1$ and $\mathbf{z}_2$, that are both involved in the generation process, in the sense that in their respective latent spaces $\mathbf{z}_1$ is an abstraction of the foreground signal of our data and $\mathbf{z}_2$ accordingly the equivalent of the background signal. For both latent spaces, we have different variational encoders, $q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x})$ and $s_{\mathbf{\chi}}(\mathbf{z}_1|\mathbf{x})$ respectively, that are realized as CNNs. In order to account for the different nature of sharp and local foreground signal and blurry, large-spanning background signal, we choose different sizes for the receptive fields of the two encoders. For $q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x})$, our 'foreground encoder', we choose a small receptive field with a size similar to the regions of interest we want to capture in the foreground. Accordingly, we let $s_{\mathbf{\chi}}(\mathbf{z}_2|\mathbf{x})$ be parametrized by a CNN with large receptive field.
+As for the background signal, it makes sense to fit a scaled-down, simpler version of the data in order to take away distraction by the foreground signal for the network. We therefore choose $g: \mathbb{R}^{MxM} \rightarrow \mathbb{R}^{mxm}$ with $M=ms$ for some $M, m, s \in \mathbb{N}$ to be a basically a pooling function with stride $s$, that pools sectors of size $s$ to a single pixel creating a much smaller image where mostly large-scale background activity is retained. We can optimize our decoder distribution for likelihood $p_{\mathbf{\theta}}(\mathbf{x})$ like before and for the background distribution $r_{\mathbf{\iota}}(g(\mathbf{x}))$, we optimize for the scaled data $g(\mathbf{x})$. With this setup, we basically have two VAEs that optimize two different ELBOs. In order to allow for interaction between the two latent spaces, we expand the VAEs with one fully connected ANN layer connecting both spaces before feeding its output back into the seperate decoders. In other words, we alter our VAE model and have:
+\begin{equation}
+\begin{split}
+& \mathbf{z}_1 \sim q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x}) \\
+& \mathbf{z}_2 \sim s_{\mathbf{\chi}}(\mathbf{z}_2|\mathbf{x}) \\
+& \tilde{\mathbf{z}}_1, \tilde{\mathbf{z}}_2 = NeuralNet((\mathbf{z}_1, \mathbf{z}_2)) \\
+& \hat{\mathbf{x}} \sim p_{\mathbf{\theta}}(\mathbf{x}|\tilde{\mathbf{z}}_1) \\ 
+& \hat{g(\mathbf{x})} \sim r_{\mathbf{\iota}}(g(\mathbf{x}|\tilde{\mathbf{z}}_2)
+\end{split}
+\end{equation}
+From this, we can derive two ELBOs analog to (XX), that can be optimized in order to maximize $\log p_{\mathbf{\theta}}(\mathbf{x})$ and $\log r_{\mathbf{\iota}}(g(\mathbf{x}))$ for our data:
 \begin{equation}
 \begin{split}
  & \log p_{\mathbf{\theta}}(\mathbf{x}) + \log r_{\mathbf{\iota}}(g(\mathbf{x}))   \\
-	= \ & \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[\log p_{\mathbf{\theta}}(\mathbf{x})\right] + \mathbb{E}_{s_{\mathbf{\chi}}(\mathbf{z}|\mathbf{x})}\left[\log r_{\mathbf{\iota}}(g(\mathbf{x}))\right] \\
-	= \ & \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log \frac{p_{\mathbf{\theta}}(\mathbf{x}, \tilde{\mathbf{z}}_1)}{p_{\mathbf{\theta}}(\tilde{\mathbf{z}}_1|\mathbf{x})} \right] 
-	+ \mathbb{E}_{s_{\mathbf{\chi}}(\mathbf{z}|\mathbf{x})}\left[ \log \frac{r_{\mathbf{\iota}}(g(\mathbf{x}), \tilde{\mathbf{z}}_2)}{r_{\mathbf{\iota}}(\tilde{\mathbf{z}}_2|g(\mathbf{x}))} \right] \\
-	= \ & ... \\
-	= \ & \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \tilde{\mathbf{z}}_1)}{q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x})}\right) \right] + KL(q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x}) || p_{\mathbf{\theta}}(\tilde{\mathbf{z}}_2| \mathbf{x})) \\
-	& + \mathbb{E}_{s_{\mathbf{\chi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{r_{\mathbf{\iota}}(g(\mathbf{x}), \tilde{\mathbf{z}}_2)}{s_{\mathbf{\chi}}(\mathbf{z}_2|\mathbf{x})}\right) \right] + KL(s_{\mathbf{\chi}}(\mathbf{z}_2|\mathbf{x}) || r_{\mathbf{\iota}}(\tilde{\mathbf{z}}_2| g(\mathbf{x})) \\
+	= \ & \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x})}\left[\log p_{\mathbf{\theta}}(\mathbf{x})\right] + \mathbb{E}_{s_{\mathbf{\chi}}(\mathbf{z}_2|\mathbf{x})}\left[\log r_{\mathbf{\iota}}(g(\mathbf{x}))\right] \\
+	= \ & \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x})}\left[ \log \frac{p_{\mathbf{\theta}}(\mathbf{x}, \tilde{\mathbf{z}}_1)}{p_{\mathbf{\theta}}(\tilde{\mathbf{z}}_1|\mathbf{x})} \right] 
+	+ \mathbb{E}_{s_{\mathbf{\chi}}(\mathbf{z}_2|\mathbf{x})}\left[ \log \frac{r_{\mathbf{\iota}}(g(\mathbf{x}), \tilde{\mathbf{z}}_2)}{r_{\mathbf{\iota}}(\tilde{\mathbf{z}}_2|g(\mathbf{x}))} \right] \\
+	= \ & \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x})}\left[ \log \left( \frac{p_{\mathbf{\theta}}(\mathbf{x}, \tilde{\mathbf{z}}_1)}{q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x})}\frac{q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x})}{p_{\mathbf{\theta}}(\tilde{\mathbf{z}}_1|\mathbf{x})}\right) \right] 
+	+ \mathbb{E}_{s_{\mathbf{\chi}}(\mathbf{z}_2|\mathbf{x})}\left[ \log \left( \frac{r_{\mathbf{\iota}}(g(\mathbf{x}), \tilde{\mathbf{z}}_2)}{s_{\mathbf{\chi}}(\mathbf{z}_1|\mathbf{x})}\frac{s_{\mathbf{\chi}}(\mathbf{z}_1|\mathbf{x})}{r_{\mathbf{\iota}}(\tilde{\mathbf{z}}_2|g(\mathbf{x}))} \right) \right] \\
+	= \ & \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \tilde{\mathbf{z}}_1)}{q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x})}\right) \right] + KL(q_{\mathbf{\phi}}(\mathbf{z}_1|\mathbf{x}) || p_{\mathbf{\theta}}(\tilde{\mathbf{z}}_2| \mathbf{x})) \\
+	& + \mathbb{E}_{s_{\mathbf{\chi}}(\mathbf{z}_1|\mathbf{x})}\left[ \log\left(\frac{r_{\mathbf{\iota}}(g(\mathbf{x}), \tilde{\mathbf{z}}_2)}{s_{\mathbf{\chi}}(\mathbf{z}_2|\mathbf{x})}\right) \right] + KL(s_{\mathbf{\chi}}(\mathbf{z}_2|\mathbf{x}) || r_{\mathbf{\iota}}(\tilde{\mathbf{z}}_2| g(\mathbf{x})) \\
 \end{split}
 \end{equation}
+%Like before, with a single ELBO and VAE, we can obtain the same estimators of the of these two ELBOs and we have a target to optimize for:
+%\begin{equation}
+%L()
+%\end{equation}
 
 %	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] + \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}{p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})} \right) \right] \\
 %	& = \mathbb{E}_{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\left[ \log\left(\frac{p_{\mathbf{\theta}}(\mathbf{x}, \mathbf{z})}{q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})}\right) \right] + KL(q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x}) || p_{\mathbf{\theta}}(\mathbf{z}| \mathbf{x})) \\
 
 
 
-\chapter{Application}
-For this thesis, a dataset was provided to evaluate the performance of different variations of VAEs for the problem of separating foreground and background signal in images of neuronal activity inside of a mouse brain. The images were obtained using a technique called \emph{2-photon BLBKL}, where a special camera used to film multiple layers of brain cells. Each image has a very tight spatial focus on one layer of cells, making it vulnerable to background signal emmited by cells in layers beneath. Their activity usually pans out across large sectors of the image making it harder to gain information about foreground signal by the cells located in the focussed layer. The real world data in this scenario suffers from many other problems that have to be addressed as well by preprocessing steps and more complex models. Also dimensionality is usually very high, requiring expensive training. 
-Therefore, for the experiments of this thesis, a dummy dataset has been provided to simulate the basic problem setting and allow for more efficient evaluation of the different scenarios to be discussed in the following. The dataset consists of $N_{\mathbf{X}} = 2000$ images with 60x60 pixels. Within each image, there are different 6x6 sectors, that independently are either on or off
+\chapter{Implementation and Experiments}
+For this thesis, artificial datasets with abstract fore- and background signal were provided to evaluate the performance of the approaches described in the theoretical part. In a very abstract sense, the data tries to resemble real world videos of neural activity within mice brain obtained using a technique called \emph{2-photon excitation microscopy}, where a special camera used to film multiple layers of brain cells. Each image has a very tight spatial focus on one layer of cells, making it vulnerable to background signal emmited by cells in layers that are not within focus. Their activity usually pans out across large sectors of the image making it harder to gain information about foreground signal by the cells located in the focussed layer. The real world data in this scenario suffers from many other problems that have to be addressed as well by preprocessing steps and more complex models. Also dimensionality is usually very high, requiring expensive training. 
+Therefore, the artificial datasets try to emulate a similar, yet less challenging scenario. The datasets each consist of 2000 images with 60x60 pixels and one channel of binary values. On each image, there are ten regions of interest of a size of 6x6 pixels, which resemble neuronal cells, that are active (value equals 1 in every pixel) or not active (value of zero) independently of each other. To simulate background activity, we introduce roundly shaped activity, that spans with a diameter of 30 pixels and is noisy in contrast to the foreground activity. While most of the pixels within a background activity are active, with each image there is a portion of random pixels that is turned off. The background activity varies across the 
 
-In the following, details of the implementation of a VAE and results  
+In the following, details of the implementation of a VAE and results 
+
+\section{Experiment scenarios}
+ 
+
 
 \end{document}

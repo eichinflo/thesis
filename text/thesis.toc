@@ -14,5 +14,6 @@
 \contentsline {subsection}{\numberline {2.7.1}Choice of model}{17}% 
 \contentsline {subsection}{\numberline {2.7.2}Neural Networks for parameterizing distributions}{18}% 
 \contentsline {section}{\numberline {2.8}Convolutional Neural Networks (CNN)}{20}% 
-\contentsline {section}{\numberline {2.9}Dual VAE setup}{20}% 
-\contentsline {chapter}{\numberline {3}Application}{21}% 
+\contentsline {section}{\numberline {2.9}Double ELBO optimization}{20}% 
+\contentsline {chapter}{\numberline {3}Implementation and Experiments}{22}% 
+\contentsline {section}{\numberline {3.1}Experiment scenarios}{23}% 

@@ -25,8 +25,8 @@ train_seperately = false  # train vae1 and vae2 seperately before combination
 alter_training = false  # train dual vaes alternately
 epochs_dual = 20  # epochs of combined training
 epochs_vae1 = 20  # epochs of seperate training for vae1
-epochs_vae2 = 20  # epochs of seperate training for vae1
-callbacks = 5
+epochs_vae2 = 23  # epochs of seperate training for vae1
+callbacks = 5  # time intervals of callback routine while training
 
 # model
 latent_dim1 = 4  # number of z-variables for vae1
@@ -49,6 +49,9 @@ plot_output_path = "output.gif"
 path_to_project = "/home/flo/projects/thesis/code/"
 params_path = "params/"
 plot_path = "plots/"
+data_path = "../dummydata/dummyData2000.mat"
+#data_path = "../dummydata/Eichin_dummyData2000_50.mat"
+#data_path = "../dummydata/Eichin_2blobs_dummyData2000.mat"
 sep_params1 = ""
 sep_params2 = ""
 
@@ -63,7 +66,7 @@ include(string(path_to_project, "code.jl"))
 ########################### load data ##########################################
 print("Loading data...")
 data = get_dummy_data(
-    string(path_to_project, "../dummydata/dummyData2000.mat"),
+    string(path_to_project, data_path),
     binary = binary,
 )
 data_scaled = get_scaled(data)
@@ -165,8 +168,8 @@ end
 
 if not_on_server
     print("Plotting...")
-    make_exploration_plot(x -> dec1(interaction_v(x)[1]), 2, 5, "dual_expl")
-    make_superduperplot(
+    make_exploration_plot(x -> dec1(interaction_v(x)[1]), 1, 5, "dual_expl3")
+    make_superduperplot("hello3", vae1_out_scal, vae2_out_scal; from=1, to=100, z2_on=true)
     plot_output_for(data[:, :, :, 1], cvae1_out, "im1_vae1_int")
     plot_output_for(data[:, :, :, 7], cvae1_out, "im2_vae1_int")
     plot_output_for(data[:, :, :, 1], cvae2_out, "im1_vae2_int")
