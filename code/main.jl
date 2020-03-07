@@ -34,15 +34,14 @@ latent_dim2 = 1  # number of z-variables for vae2
 inter1 = 8  # side-length of image after interaction
 inter2 = 2
 store_params = false # store models after training?
-load_params = false  # load models from checkpoint before training?
+load_params = true  # load models from checkpoint before training?
 
 # plotting
-plot_recon = false  # plot data reconstruction?
-not_on_server = false  # we don't want to plot on server, leads to problems
+not_on_server = true  # we don't want to plot on server, leads to problems
 
 # paths
-dual_params1 = "params1_int_sc=1_bin=1_e1=0_e2=0_ed=200.jld2"
-dual_params2 = "params2_int_sc=1_bin=1_e1=0_e2=0_ed=200.jld2"
+dual_params1 = "params1_90.jld2"
+dual_params2 = "params2_90.jld2"
 plot_input_path = "input.gif"
 plot_output_path = "output.gif"
 # change accordingly on your machine
@@ -116,20 +115,6 @@ if store_params
     print("done.\n")
 end
 
-############################# plotting #########################################
-if not_on_server
-    print("Plotting...")
-    # create the plots found in the thesis
-    include(string(path_to_project, "plotting.jl"))
-    make_reconstruction_plot(x -> dec1(int1(x)), 2, latent_dim1, "recon_vae1_sep")
-    make_reconstruction_plot(x -> dec2_scal(int2(x)), 2, latent_dim2, "recon_vae2_sep")
-    plot_output_for(data[:, :, :, 1], cvae1, "im1_vae1")
-    plot_output_for(data[:, :, :, 7], cvae1, "im2_vae1")
-    plot_output_for(data[:, :, :, 1], cvae2_scal, "im1_vae2")
-    plot_output_for(data[:, :, :, 7], cvae2_scal, "im2_vae2")
-    print("done.\n")
-end
-
 ############# train models simultaneously ######################################
 #### train vae1 and vae2  with activated interaction for same target
 if train_seperately
@@ -168,11 +153,8 @@ end
 
 if not_on_server
     print("Plotting...")
-    make_exploration_plot(x -> dec1(interaction_v(x)[1]), 1, 5, "dual_expl3")
-    make_superduperplot("hello3", vae1_out_scal, vae2_out_scal; from=1, to=100, z2_on=true)
-    plot_output_for(data[:, :, :, 1], cvae1_out, "im1_vae1_int")
-    plot_output_for(data[:, :, :, 7], cvae1_out, "im2_vae1_int")
-    plot_output_for(data[:, :, :, 1], cvae2_out, "im1_vae2_int")
-    plot_output_for(data[:, :, :, 7], cvae2_out, "im2_vae2_int")
+    include(string(path_to_project, "plotting.jl"))
+    make_exploration_plot(x -> dec1(interaction_v(x)[1]), 5, 5, "exploration")
+    make_reconstruction_page("reconstruction", vae1_out_scal, vae2_out_scal, from=1, to=8)
     print("done.\n")
 end

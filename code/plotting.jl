@@ -2,6 +2,7 @@
 using Plots
 using Images
 using ColorSchemes
+using Measures
 
 "Create a list of indices to emulate differnet states of latent variables z
 with dimension dim=dim(z) and one of the entries set to +-value, rest to 0."
@@ -25,10 +26,13 @@ function make_exploration_plot(decoder, value, dim, title)
         Flux.Tracker.data(decoder(i))[:, :],
         clim=(0, 1),
         seriescolor = cgrad(ColorSchemes.gray.colors),
-        title = string("z-state: ", i),
+        ann = (30, -2, string("z-state: ", i)),
+        bottom_margin = 3mm,
+        legend = false,
+        ticks = false,
     ) for i in indices]
     png(
-        plot(plots..., layout = (dim, 2), size = (1000, 250 * (dim))),
+        plot(plots..., layout = (dim, 2), size = (430, 200 * (dim))),
         string(path_to_project, plot_path, title, ".png"),
     )
 end
@@ -96,4 +100,98 @@ function plot_reconstruction(i, sequence, data_scaled, vae1_out, vae2_out)
     )
     plots = [plt0, plt1, plt2, plt3]
     return Plots.plot(plots..., layout = (1, 4), size = (1800, 300))
+end
+
+function make_reconstruction_page(name, vae1_out, vae2_out; from=10, to=18)
+    sequence = [reshape(data[:, :, :, i], (60, 60, 1, 1)) for i = 1:size(
+        data,
+        4,
+    )][from:to]
+    sequence2 = [reshape(data_scaled[:, :, :, i], (2, 2, 1, 1)) for i = 1:size(
+        data_scaled,
+        4,
+    )][from:to]
+    plots = [plot_reconstruction2(1, sequence, sequence2, vae1_out, vae2_out)]
+    for i in 2:to-from
+        plots = [plots..., plot_reconstruction3(i, sequence, sequence2, vae1_out, vae2_out)]
+    end
+    png(Plots.plot(plots..., layout = (to-from, 1), size = (800, 1200), legend=true), string(path_to_project, plot_path, name, ".png"))
+end
+
+function plot_reconstruction3(i, sequence, sequence2, vae1_out, vae2_out)
+    out3 = vae2_out(sequence[i])
+    out3 = reshape(Flux.Tracker.data(out3), (2, 2))
+    plt3 = Plots.heatmap(
+        out3,
+        clim = (0, 1),
+        seriescolor = cgrad(ColorSchemes.gray.colors),
+        legend = false,
+        ticks = false
+    )
+    plt2 = Plots.heatmap(
+        Float32.(reshape(sequence2[i], (2, 2))),
+        seriescolor = cgrad(ColorSchemes.gray.colors),
+        clim = (0, 1),
+        legend = false,
+        ticks = false
+    )
+    plt0 = Plots.heatmap(
+        reshape(sequence[i], (60, 60)),
+        seriescolor = cgrad(ColorSchemes.gray.colors),
+        clim=(0, 1),
+        legend = false,
+        ticks = false
+    )
+    out1 = vae1_out(sequence[i])
+    out1 = reshape(Flux.Tracker.data(out1), (60, 60))
+    plt1 = Plots.heatmap(
+        out1,
+        clim = (0, 1),
+        seriescolor = cgrad(ColorSchemes.gray.colors),
+        legend = false,
+        ticks = false
+    )
+    plots = [plt0, plt1, plt2, plt3]
+    return Plots.plot(plots..., layout = (1, 4), size = (800, 200))
+end
+
+function plot_reconstruction2(i, sequence, sequence2, vae1_out, vae2_out)
+    out3 = vae2_out(sequence[i])
+    out3 = reshape(Flux.Tracker.data(out3), (2, 2))
+    plt3 = Plots.heatmap(
+        out3,
+        clim = (0, 1),
+        seriescolor = cgrad(ColorSchemes.gray.colors),
+        title = "output_vae2",
+        legend = false,
+        ticks = false
+    )
+    plt2 = Plots.heatmap(
+        Float32.(reshape(sequence2[i], (2, 2))),
+        seriescolor = cgrad(ColorSchemes.gray.colors),
+        title = "target_vae2",
+        clim = (0, 1),
+        legend = false,
+        ticks = false
+    )
+    plt0 = Plots.heatmap(
+        reshape(sequence[i], (60, 60)),
+        seriescolor = cgrad(ColorSchemes.gray.colors),
+        title = "input",
+        clim=(0, 1),
+        legend = false,
+        ticks = false
+    )
+    out1 = vae1_out(sequence[i])
+    out1 = reshape(Flux.Tracker.data(out1), (60, 60))
+    plt1 = Plots.heatmap(
+        out1,
+        clim = (0, 1),
+        seriescolor = cgrad(ColorSchemes.gray.colors),
+        title = "output_vae1",
+        legend = false,
+        ticks = false
+    )
+    plots = [plt0, plt1, plt2, plt3]
+    return Plots.plot(plots..., layout = (1, 4), size = (800, 200))
 end

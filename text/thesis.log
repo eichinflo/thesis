@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.1.30)  5 MAR 2020 15:30
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.1.30)  7 MAR 2020 19:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -285,29 +285,39 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./images/logo.png>] [1
 
-] [2
-
-] [3
-
-] [4
-
 ]
-(./thesis.toc)
+Underfull \hbox (badness 10000) in paragraph at lines 34--35
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 34--35
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 34--35
+
+ []
+
+[2
+
+] (./thesis.toc)
 \tf@toc=\write3
 \openout3 = `thesis.toc'.
 
- [5
+ [3
 
 ]
 Chapter 1.
-[6
+[4
 
 ]
 Chapter 2.
-[7
+[5
 
 ]
-Overfull \hbox (35.36572pt too wide) in paragraph at lines 67--68
+Overfull \hbox (35.36572pt too wide) in paragraph at lines 58--59
 []\OT1/cmr/m/it/12 Intractability\OT1/cmr/m/n/12 : the in-te-gral of the margin
 al like-li-hood $\OML/cmm/m/it/12 p[]\OT1/cmr/m/n/12 (\OT1/cmr/bx/n/12 x\OT1/cm
 r/m/n/12 ) = [] \OML/cmm/m/it/12 p[]\OT1/cmr/m/n/12 (\OT1/cmr/bx/n/12 z\OT1/cmr
@@ -316,68 +326,156 @@ r/m/n/12 ) = [] \OML/cmm/m/it/12 p[]\OT1/cmr/m/n/12 (\OT1/cmr/bx/n/12 z\OT1/cmr
 /cmr/m/n/12 ,
  []
 
-[8]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 90.
- (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+[6] [7]
+Overfull \hbox (14.10864pt too wide) in paragraph at lines 100--101
+\OT1/cmr/m/n/12 Since $[]$ is monotonous, max-i-miz-ing $\OML/cmm/m/it/12 p[]\O
+T1/cmr/m/n/12 (\OT1/cmr/bx/n/12 x\OT1/cmr/m/n/12 )$ is equiv-a-lent to max-i-mi
+z-ing $[] \OML/cmm/m/it/12 p[]\OT1/cmr/m/n/12 (\OT1/cmr/bx/n/12 x\OT1/cmr/m/n/1
+2 )$.
+ []
+
+[8] [9] [10] [11] [12] [13] [14]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 280.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 90.
- [9] [10] [11]
-[12] [13] [14]
-Overfull \hbox (34.6033pt too wide) detected at line 270
-\OMS/cmsy/m/n/12 r[]L[]\OT1/cmr/m/n/12 (\OT1/cmr/bx/n/12 M\OT1/cmr/m/n/12 ) \OM
-S/cmsy/m/n/12 ' [] [] r[]\OT1/cmr/m/n/12 ([] \OML/cmm/m/it/12 p[]\OT1/cmr/m/n/1
-2 (\OT1/cmr/bx/n/12 x[]\OML/cmm/m/it/12 ; f\OT1/cmr/m/n/12 ([][]\OML/cmm/m/it/1
-2 ; []; \OT1/cmr/bx/n/12 x\OT1/cmr/m/n/12 )) \OMS/cmsy/m/n/12 ^^@ [] \OML/cmm/m
-/it/12 q[]\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 f\OT1/cmr/m/n/12 ([][]\OML/cmm/m/it
-/12 ; []; \OT1/cmr/bx/n/12 x[]\OT1/cmr/m/n/12 )\OMS/cmsy/m/n/12 j\OT1/cmr/bx/n/
-12 x[]\OT1/cmr/m/n/12 ))
- []
-
-[15] [16] [17]
-Overfull \hbox (3.89459pt too wide) in paragraph at lines 327--327
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 280.
+ [15]
+Overfull \hbox (3.89459pt too wide) in paragraph at lines 299--299
 []\OT1/cmr/bx/n/14.4 Neural Net-works for pa-ram-e-ter-iz-ing dis-tri-bu-tions 
 
  []
 
-[18] [19] [20]
-Overfull \hbox (20.87527pt too wide) detected at line 416
+[16] [17] [18] [19]
+Overfull \hbox (20.87527pt too wide) detected at line 397
 []
  []
 
-[21]
+[20]
 Chapter 3.
-[22
+[21
 
-] [23] (./thesis.aux) ) 
+] [22] [23]
+Overfull \hbox (41.02338pt too wide) in paragraph at lines 433--434
+\OT1/cmr/m/n/12 con-tain back-ground ac-tiv-ity. Es-pe-cially for $\OT1/cmr/bx/
+n/12 z[] \OMS/cmsy/m/n/12 2 f\OT1/cmr/m/n/12 (\OMS/cmsy/m/n/12 ^^@\OT1/cmr/m/n/
+12 5\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 0\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 0\OM
+L/cmm/m/it/12 ; \OT1/cmr/m/n/12 0)\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 (0\OML/cmm
+/m/it/12 ; \OMS/cmsy/m/n/12 ^^@\OT1/cmr/m/n/12 5\OML/cmm/m/it/12 ; \OT1/cmr/m/n
+/12 0\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 0)\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 (0
+\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 0\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 0\OML/cm
+m/m/it/12 ; \OT1/cmr/m/n/12 5)\OMS/cmsy/m/n/12 g$
+ []
+
+[24]
+<../code/plots/reconstruction1.png, id=101, 801.99625pt x 1204.5pt>
+File: ../code/plots/reconstruction1.png Graphic file (type png)
+<use ../code/plots/reconstruction1.png>
+Package pdftex.def Info: ../code/plots/reconstruction1.png  used on input line 
+444.
+(pdftex.def)             Requested size: 327.20668pt x 491.42215pt.
+<../code/plots/scale.png, id=102, 23.8491pt x 52.2753pt>
+File: ../code/plots/scale.png Graphic file (type png)
+<use ../code/plots/scale.png>
+Package pdftex.def Info: ../code/plots/scale.png  used on input line 444.
+(pdftex.def)             Requested size: 42.67912pt x 93.55383pt.
+
+
+LaTeX Warning: Float too large for page by 12.42215pt on input line 448.
+
+<../code/plots/reconstruction3_48_55.png, id=103, 801.99625pt x 1204.5pt>
+File: ../code/plots/reconstruction3_48_55.png Graphic file (type png)
+<use ../code/plots/reconstruction3_48_55.png>
+Package pdftex.def Info: ../code/plots/reconstruction3_48_55.png  used on input
+ line 452.
+(pdftex.def)             Requested size: 327.20668pt x 491.42215pt.
+File: ../code/plots/scale.png Graphic file (type png)
+<use ../code/plots/scale.png>
+Package pdftex.def Info: ../code/plots/scale.png  used on input line 453.
+(pdftex.def)             Requested size: 42.67912pt x 93.55383pt.
+
+LaTeX Warning: Float too large for page by 26.92215pt on input line 457.
+
+<../code/plots/reconstruction2_1_8.png, id=104, 801.99625pt x 1204.5pt>
+File: ../code/plots/reconstruction2_1_8.png Graphic file (type png)
+<use ../code/plots/reconstruction2_1_8.png>
+Package pdftex.def Info: ../code/plots/reconstruction2_1_8.png  used on input l
+ine 461.
+(pdftex.def)             Requested size: 327.20668pt x 491.42215pt.
+File: ../code/plots/scale.png Graphic file (type png)
+<use ../code/plots/scale.png>
+Package pdftex.def Info: ../code/plots/scale.png  used on input line 462.
+(pdftex.def)             Requested size: 42.67912pt x 93.55383pt.
+
+LaTeX Warning: Float too large for page by 12.42215pt on input line 466.
+
+<../code/plots/exploration1.png, id=105, 430.60875pt x 1002.74625pt>
+File: ../code/plots/exploration1.png Graphic file (type png)
+<use ../code/plots/exploration1.png>
+Package pdftex.def Info: ../code/plots/exploration1.png  used on input line 470
+.
+(pdftex.def)             Requested size: 199.16928pt x 463.80878pt.
+File: ../code/plots/scale.png Graphic file (type png)
+<use ../code/plots/scale.png>
+Package pdftex.def Info: ../code/plots/scale.png  used on input line 471.
+(pdftex.def)             Requested size: 42.67912pt x 93.55383pt.
+<../code/plots/exploration3.png, id=106, 430.60875pt x 1002.74625pt>
+File: ../code/plots/exploration3.png Graphic file (type png)
+<use ../code/plots/exploration3.png>
+Package pdftex.def Info: ../code/plots/exploration3.png  used on input line 479
+.
+(pdftex.def)             Requested size: 199.16928pt x 463.80878pt.
+File: ../code/plots/scale.png Graphic file (type png)
+<use ../code/plots/scale.png>
+Package pdftex.def Info: ../code/plots/scale.png  used on input line 480.
+(pdftex.def)             Requested size: 42.67912pt x 93.55383pt.
+<../code/plots/exploration2.png, id=107, 430.60875pt x 1002.74625pt>
+File: ../code/plots/exploration2.png Graphic file (type png)
+<use ../code/plots/exploration2.png>
+Package pdftex.def Info: ../code/plots/exploration2.png  used on input line 488
+.
+(pdftex.def)             Requested size: 199.16928pt x 463.80878pt.
+File: ../code/plots/scale.png Graphic file (type png)
+<use ../code/plots/scale.png>
+Package pdftex.def Info: ../code/plots/scale.png  used on input line 489.
+(pdftex.def)             Requested size: 42.67912pt x 93.55383pt.
+[25] [26 <../code/plots/reconstruction1.png> <../code/plots/scale.png>]
+[27 <../code/plots/reconstruction3_48_55.png>] [28 <../code/plots/reconstructio
+n2_1_8.png>] [29 <../code/plots/exploration1.png>] [30 <../code/plots/explorati
+on3.png>] [31 <../code/plots/exploration2.png>] [32] [33] [34
+
+] (./thesis.aux) ) 
 Here is how much of TeX's memory you used:
- 3472 strings out of 494510
- 48457 string characters out of 6176236
- 130391 words of memory out of 5000000
- 7089 multiletter control sequences out of 15000+600000
- 13977 words of font info for 53 fonts, out of 8000000 for 9000
+ 3522 strings out of 494510
+ 49756 string characters out of 6176236
+ 131475 words of memory out of 5000000
+ 7130 multiletter control sequences out of 15000+600000
+ 14146 words of font info for 54 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 41i,21n,27p,1272b,384s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmbx6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.p
-fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></u
-sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/sha
-re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy
-8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on thesis.pdf (24 pages, 591579 bytes).
+ 41i,21n,27p,2003b,384s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx6
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/te
+xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/font
+s/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+sy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb
+></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/share
+/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on thesis.pdf (35 pages, 819688 bytes).
 PDF statistics:
- 149 PDF objects out of 1000 (max. 8388607)
- 103 compressed objects within 2 object streams
+ 196 PDF objects out of 1000 (max. 8388607)
+ 130 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 41 words of extra memory for PDF output out of 10000 (max. 10000000)
 
