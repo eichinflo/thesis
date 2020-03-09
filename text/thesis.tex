@@ -25,6 +25,7 @@
 
 \maketitle
 
+\leavevmode\thispagestyle{empty}\newpage
 
 \begin{center}
 \vspace*{\fill}
@@ -32,14 +33,22 @@
 \vspace*{\fill}
 \end{center}
 
+\leavevmode\thispagestyle{empty}\newpage
+
+\leavevmode\thispagestyle{empty}\newpage
+
 \chapter*{Declaration}
 I hereby declare that the thesis submitted is my own unaided work. All direct or indirect sources used are acknowledged as references. This work was not previously presented to another examination board and has not been published. \\ \\ \\
 
 \today
-
 \tableofcontents
 
 \chapter{Introduction}
+With the rise of computation power in the last decades, Machine Learning approaches have revolutionized various practical problems, that were deemed unlikely to be solved for a long time. Simultaneously, the data we collect about the world becomes more detailed than ever before. With datasets of hundreds of gigabytes, Artificial Neural Networks, a family of algorithms, that profits from both, big data and computation power, are being applied to all kinds of domains and have replaced many state-of-the-art approaches or at least matched their performance.
+This work has been motivated by the use-case of separating foreground and background signal within image data. Take for example an image taken by your camera: Usually theres parts of the image, that are within focus and appear sharp on the photography. We refer to this as foreground of the image. The foreground usually contains most of the informative parts, like, for example, faces or your cat. Parts, that are out of focus appear more blurry and usually span over large partitions of the image. With the same logic, these components are called background. The background contains the less informative parts, like for example trees and buildings, which were not object of the photography. In the examples given, it is usually not hard for a human to seperate foreground and background. However, even with this kind of data, it is hard to teach this as an algorithm to a computer. In this case, we can use human experts to label images and use algorithms, that work in a supervised manner. But what if we have image data, where even the best trained humans are not able to discriminate between back- and foreground? To give an example, we are often confronted with this problem with medical image data, motivating this work. To be more precise, the starting point of this thesis was video data, obtained from a technique called 2-photon excitation microscopy. It contains information about the activity of neural cells within the brain of a mouse. In this case, we want to separate the activity of neural cells in the focussed foreground from the activity of cells, that were not within focus of the images. Human experts are usually not able to label large amounts of such data correctly and efficiently, which is why unsupervised machine learning approaches are needed.
+
+In this work, the Variational Autoencoder, a statistical latent variable model, that was introduced by Kingma and Welling in \cite{kingma2}, which is an example for an application of Neural Networks, will be derived and evaluated on a artificial datasets, that resembles the scenario described above. First, a theoretical background will be built by introducing latent variable models and variational inference. In the following, an target, known as the Variational Lower Bound or ELBO, will be derived as well as an approach to optimize it, the Auto-encoding Variational Bayes algorithm. Subsequently, we will introduce the Variational Autoencoder and discuss Neural Networks as a way to parameterize out model. Concluding the theoretical part, Convolutional Neural Networks and a special double-ELBO structure for our problem setup will be described.
+In the second part of this thesis, we will specify the datasets and the implementation of the algorithms. Subsequently, the results of the evaluation of the separative ability will be described and discussed.
 
 \chapter{Theoretical Part}
 
@@ -68,7 +77,7 @@ Given an intractable probability distribution $p$ and a family of tractable dist
 Of course, this description of variational techniques leaves us with questions. What is the similarity of two distributions $q_{\pmb{\phi}}$ and $p_{\pmb{\theta}}$? How do we choose an according optimization objective $\mathcal{L}_{\pmb{\phi}}$? What is a good way of formulating the tractable family of distributions $(q_{\pmb{\phi}})_{\pmb{\phi} \in \pmb{\Phi}}$? \\
 The (partial) answering to these three questions for the latent variable model, described in the previous section, will be the main motivation for the following sections in order to lay the groundwork for the introduction of the Variational Autoencoder (VAE). Inheriting it's name from \emph{Autoencoders}[XX], a VAE is a probabilistic model designed for learning latent representations with the help of Artificial Neuronal Networks (ANNs) and a variational optimization approach to the approximation of the encoder distribution.
 
-\section{Kullback-Leibler divergence}
+\section{Kullback-Leibler Divergence}
 Beggining with our first question, there is a way of quantifying the 'similarity' of two distributions $p(\mathbf{x})$ and $q(\mathbf{x})$ in information theory, known as the \emph{Kullback-Leibler (KL) divergence}. For $p(\mathbf{x}), q(\mathbf{x})$ continuous, the KL divergence is defined as:
 \begin{equation}
 	KL(q(\mathbf{x})||p(\mathbf{x})) := \int_{-\infty}^{\infty} q(\mathbf{x}) \log \frac{q(\mathbf{x})}{p(\mathbf{x})} d \mathbf{x}
@@ -160,7 +169,7 @@ Update parameters $\pmb{\theta} \rightarrow \pmb{\theta} + \eta \nabla_{\pmb{\th
 Note, that $\eta$ is a hyperparameter, that determines the extent, to which the gradients update the parameters in each epoch. It is therefore also called the \emph{learning rate} and is an important parameter to choose as it highly affects the convergence of the algorithm: If we choose $\eta$ too small, we will only move slowly in the 'preferred' direction of local maxima. However, if we choose $\eta$ too big, our updating-steps get too large and the algorithm cannot converge in the worst case.
 
 
-\subsection{Estimation of the gradients and ELBO}
+\subsection{Estimation of the Gradients and ELBO}
 In general, analytical computations of the gradients of the ELBO are intractable, so we have to estimate them. For $\nabla_{\pmb{\theta}, \pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X})$, it is sufficient to estimate $\nabla_{\pmb{\theta}, \pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x})$ for each $\mathbf{x} \in \mathbf{X}$ because since (2.11) we have:
 \begin{equation}
 	\nabla_{\pmb{\theta}, \pmb{\phi}}\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{X}) = \nabla_{\pmb{\theta}, \pmb{\phi}}  \sum_{\mathbf{x} \in \mathbf{X}} \frac{\mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x})}{N_{\mathbf{X}}} = \frac{1}{N_{\mathbf{X}}} \sum_{\mathbf{x} \in \mathbf{X}} \nabla_{\pmb{\theta}, \pmb{\phi}} \mathcal{L}_{\pmb{\theta}, \pmb{\phi}}(\mathbf{x})
@@ -290,7 +299,7 @@ And while each has its own perks, some are better suited for different tasks. Fo
 The gradients with respect to the parameters $\pmb{\phi}$ of an ANN can be calculated using a procedure called \emph{Backpropagation}, which exploits the chain rule of differentiation to compute approximations of the gradients. Another approach, that is currently evolving, is \emph{differentiable programming}, where the key idea is to compute derivatives for defined functions automatically at compiling time. In the case of neural networks, there is only matrix multiplications, vector additions and the usually simple activation functions, making them a promising application for differential programming. We will skip a formal introduction of both concepts and advice the interested reader consider \cite{diff} for an overview.
 
 \section{The Variational Auto-encoder (VAE)}
-\subsection{Choice of model}
+\subsection{Choice of Model}
 
 The definition of the AEVB algorithm left some options regarding the exact nature of the final model. Namely, we still have to choose:
 \begin{itemize}
@@ -301,7 +310,7 @@ The definition of the AEVB algorithm left some options regarding the exact natur
 We want 1) to be complex enough to model the data sufficiently well. 3) brings us back to our last question from the beginning of this chapter, where we asked for a good way to formulate a the variational class of tractable distributions.
 
 
-\subsection{Neural Networks for parameterizing distributions}
+\subsection{Neural Networks for Parameterizing Distributions}
 For the VAE, we let $p_{\pmb{\theta}}(\mathbf{x}|\mathbf{z})$ be a multivariate normal Distribution (for continuous data) or Bernoulli (binary data). We can model the parameters $\pmb{\mu}, \pmb{\Sigma}$ or $\mathbf{p}$ for both cases as the outputs of an ANN with parameters $\pmb{\theta}$:
 \begin{equation}
 \begin{split}
@@ -384,7 +393,7 @@ ConvolutionalNeuralNet = \alpha^{(L)} \circ \beta^{(L-1)} \circ \alpha^{(L-1)} \
 \end{equation}
 Where $L \in \mathbb{N}$ is the number of layers. The parameters, that CNNs can be optimized with, are the filter matrices $\pmb{\phi} = \{ K^{(i)}_j | \ i=1, ..., L; \ j=1, ..., r^{(i)} \}$. We also call $K^{(1)}_j$ \emph{receptive fields} and accordingly $r^{(1)}$ the \emph{size of the receptive field}.
 
-\subsection{Utilizing CNNs for the decoder}
+\subsection{Utilizing CNNs for the Decoder}
 Now, this structure of CNNs works well for our encoder, as our inputs are high dimensional images and outputs are the low dimensional parameters of the prior distribution. How can we apply the concept of convolution to the decoder?
 Basically, all we need is a way of upsampling our images. So, instead of using pooling layers to downsample feature maps, we can use \emph{unpooling layers} $\beta_{-1}: \mathbb{R} \rightarrow Mat(r^{(i)} \times r^{(i)}, \mathbb{R})$, that have the same set of parameters $r^{(i)}$ and $s^{(i)}$. We apply $\beta^{-1}$ to each value in the input feature map and combine the results with respect to $s^{(i)}$ in the obvious way. One choice is for example to set $s^{(i)} = r^{(i)}$ and choose $h$ as the function that outputs a zero matrix where one entry is the input value. We can compose unpooling layers with convolutions to realise a layer, that is referred to as \emph{transposed convolution} or \emph{deconvolution}. Like this, we can create a CNN structure that realises the decoder of our VAE:
 \begin{equation}
