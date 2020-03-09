@@ -18,46 +18,47 @@
 \@writefile{toc}{\contentsline {section}{\numberline {2.2}Variational Inference}{9}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2.3}Kullback-Leibler Divergence}{10}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2.4}Variational Lower Bound (ELBO)}{11}\protected@file@percent }
+\citation{kingma2}
 \@writefile{toc}{\contentsline {section}{\numberline {2.5}Auto-encoding Variational Bayes}{13}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.5.1}Batch Gradient Descent}{13}\protected@file@percent }
 \@writefile{loa}{\contentsline {algocf}{\numberline {1}{\ignorespaces Batch Gradient Descent}}{13}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.5.2}Estimation of the Gradients and ELBO}{13}\protected@file@percent }
 \citation{kingma1}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.5.3}Stochastic Gradient Descent}{15}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.5.4}Stochastic Optimization of the ELBO}{17}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5.4}Stochastic Optimization of the ELBO}{16}\protected@file@percent }
 \@writefile{loa}{\contentsline {algocf}{\numberline {2}{\ignorespaces Auto-Encoding Variational Bayes (AEVB)}}{17}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2.6}Artificial Neural Networks}{17}\protected@file@percent }
 \citation{diff}
-\@writefile{toc}{\contentsline {section}{\numberline {2.7}The Variational Auto-encoder (VAE)}{19}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.7.1}Choice of Model}{19}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.7}The Variational Auto-encoder (VAE)}{18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.7.1}Choice of Model}{18}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.7.2}Neural Networks for Parameterizing Distributions}{19}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2.8}Convolutional Neural Networks (CNN)}{21}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.8.1}Convolutions}{21}\protected@file@percent }
-\citation{cvae}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.8.2}Pooling layers}{22}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.8.3}Utilizing CNNs for the Decoder}{22}\protected@file@percent }
+\citation{cvae}
 \@writefile{toc}{\contentsline {section}{\numberline {2.9}Double ELBO optimization}{23}\protected@file@percent }
 \citation{phot}
-\@writefile{toc}{\contentsline {chapter}{\numberline {3}Implementation and Experiments}{25}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {3}Implementation and Experiments}{26}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {3.1}Implementation}{26}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.2}Results}{27}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.3}Discussion}{29}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Reconstruction plot of eight images $\mathbf  {x}$ sampled from dataset $\mathbf  {X}_{90}$. Each row resembles a different input image and we have columns for the input image $\mathbf  {x}$, output $vae1(\mathbf  {x})$, the scaled input image $g(\mathbf  {x})$ and output $vae2(\mathbf  {x})$.}}{30}\protected@file@percent }
-\newlabel{fig:recon1}{{3.1}{30}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces Reconstruction plot of eight images $\mathbf  {x}$ sampled from dataset $\mathbf  {X}_{90, 20}$. Each row resembles a different input image and we have columns for the input image $\mathbf  {x}$, output $vae1(\mathbf  {x})$, the scaled input image $g(\mathbf  {x})$ and output $vae2(\mathbf  {x})$.}}{31}\protected@file@percent }
-\newlabel{fig:recon3}{{3.2}{31}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3.3}{\ignorespaces Reconstruction plot of eight images $\mathbf  {x}$ sampled from dataset $\mathbf  {X}_{50}$. Each row resembles a different input image and we have columns for the input image $\mathbf  {x}$, output $vae1(\mathbf  {x})$, the scaled input image $g(\mathbf  {x})$ and output $vae2(\mathbf  {x})$.}}{32}\protected@file@percent }
-\newlabel{fig:recon2}{{3.3}{32}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3.4}{\ignorespaces Exploration of latent space of a dual VAE trained on dataset $\mathbf  {X}_{90}$. Images show outputs of $vae1$ for different states of $\mathbf  {z}_1$ and $\mathbf  {z}_2$, which are annotated below the respective output in the form [$\mathbf  {z}_{1, 1}$, $\mathbf  {z}_{1, 2}$, $\mathbf  {z}_{1, 3}$, $\mathbf  {z}_{1, 4}$, $\mathbf  {z}_2$].}}{33}\protected@file@percent }
-\newlabel{fig:expl1}{{3.4}{33}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3.5}{\ignorespaces Exploration of latent space of a dual VAE trained on dataset $\mathbf  {X}_{90, 20}$. Images show outputs of $vae1$ for different states of $\mathbf  {z}_1$ and $\mathbf  {z}_2$, which are annotated below the respective output in the form [$\mathbf  {z}_{1, 1}$, $\mathbf  {z}_{1, 2}$, $\mathbf  {z}_{1, 3}$, $\mathbf  {z}_{1, 4}$, $\mathbf  {z}_2$].}}{34}\protected@file@percent }
-\newlabel{fig:expl3}{{3.5}{34}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3.6}{\ignorespaces Exploration of latent space of a dual VAE trained on dataset $\mathbf  {X}_{50}$. Images show outputs of $vae1$ for different states of $\mathbf  {z}_1$ and $\mathbf  {z}_2$, which are annotated below the respective output in the form [$\mathbf  {z}_{1, 1}$, $\mathbf  {z}_{1, 2}$, $\mathbf  {z}_{1, 3}$, $\mathbf  {z}_{1, 4}$, $\mathbf  {z}_2$].}}{35}\protected@file@percent }
-\newlabel{fig:expl2}{{3.6}{35}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {4}Conclusion}{38}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.1}Implementation}{27}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.2}Results}{28}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.3}Discussion}{30}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Reconstruction plot of eight images $\mathbf  {x}$ sampled from dataset $\mathbf  {X}_{90}$. Each row resembles a different input image and we have columns for the input image $\mathbf  {x}$, output $vae1(\mathbf  {x})$, the scaled input image $g(\mathbf  {x})$ and output $vae2(\mathbf  {x})$.}}{31}\protected@file@percent }
+\newlabel{fig:recon1}{{3.1}{31}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces Reconstruction plot of eight images $\mathbf  {x}$ sampled from dataset $\mathbf  {X}_{90, 20}$. Each row resembles a different input image and we have columns for the input image $\mathbf  {x}$, output $vae1(\mathbf  {x})$, the scaled input image $g(\mathbf  {x})$ and output $vae2(\mathbf  {x})$.}}{32}\protected@file@percent }
+\newlabel{fig:recon3}{{3.2}{32}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.3}{\ignorespaces Reconstruction plot of eight images $\mathbf  {x}$ sampled from dataset $\mathbf  {X}_{50}$. Each row resembles a different input image and we have columns for the input image $\mathbf  {x}$, output $vae1(\mathbf  {x})$, the scaled input image $g(\mathbf  {x})$ and output $vae2(\mathbf  {x})$.}}{33}\protected@file@percent }
+\newlabel{fig:recon2}{{3.3}{33}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.4}{\ignorespaces Exploration of latent space of a dual VAE trained on dataset $\mathbf  {X}_{90}$. Images show outputs of $vae1$ for different states of $\mathbf  {z}_1$ and $\mathbf  {z}_2$, which are annotated below the respective output in the form [$\mathbf  {z}_{1, 1}$, $\mathbf  {z}_{1, 2}$, $\mathbf  {z}_{1, 3}$, $\mathbf  {z}_{1, 4}$, $\mathbf  {z}_2$].}}{34}\protected@file@percent }
+\newlabel{fig:expl1}{{3.4}{34}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.5}{\ignorespaces Exploration of latent space of a dual VAE trained on dataset $\mathbf  {X}_{90, 20}$. Images show outputs of $vae1$ for different states of $\mathbf  {z}_1$ and $\mathbf  {z}_2$, which are annotated below the respective output in the form [$\mathbf  {z}_{1, 1}$, $\mathbf  {z}_{1, 2}$, $\mathbf  {z}_{1, 3}$, $\mathbf  {z}_{1, 4}$, $\mathbf  {z}_2$].}}{35}\protected@file@percent }
+\newlabel{fig:expl3}{{3.5}{35}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.6}{\ignorespaces Exploration of latent space of a dual VAE trained on dataset $\mathbf  {X}_{50}$. Images show outputs of $vae1$ for different states of $\mathbf  {z}_1$ and $\mathbf  {z}_2$, which are annotated below the respective output in the form [$\mathbf  {z}_{1, 1}$, $\mathbf  {z}_{1, 2}$, $\mathbf  {z}_{1, 3}$, $\mathbf  {z}_{1, 4}$, $\mathbf  {z}_2$].}}{36}\protected@file@percent }
+\newlabel{fig:expl2}{{3.6}{36}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {4}Conclusion}{39}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
