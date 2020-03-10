@@ -414,7 +414,7 @@ Basically, all that is needed, is a way of upsampling image slices instead of do
 Other, more complex approaches to transposed convolution in VAEs can be found in \cite{cvae}.
 
 
-\section{Double ELBO optimization}
+\section{Double ELBO Optimization}
 When working with real world data such as images, we're usually confronted with a mix of layers of information, that are in focus and others that are not. We want to refer to the former as foreground and the latter as background. For various applications, it is desirable to separate foreground and background signal in such data. Taking this as motivation, we propose an expansion of the Variational Autoencoder to fit such a task.
 
 So far, the generation process of the datapoints $\mathbf{x}$ has been assumed to involve only one multi-dimensional latent variable and one distribution. In our scenario, the datapoints $\mathbf{x} = f(\mathbf{x}_1, \mathbf{x}_2)$ are a combination of foreground signal $\mathbf{x}_1$ and background signal $\mathbf{x}_2$ for some function $f$.
